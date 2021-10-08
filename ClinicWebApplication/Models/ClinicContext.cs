@@ -58,10 +58,6 @@ namespace ClinicWebApplication.Models
 
                 entity.Property(e => e.Description).IsRequired();
 
-                entity.Property(e => e.Image)
-                    .IsRequired()
-                    .HasColumnType("image");
-
                 entity.Property(e => e.Name).IsRequired();
             });
 

@@ -13,22 +13,22 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class DoctorsController : ControllerBase
     {
-        ClinicContext context;
+        private readonly ClinicContext _context;
 
         public DoctorsController(ClinicContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Doctor>>> Get()
         {
-            return await context.Doctors.ToListAsync();
+            return await _context.Doctors.ToListAsync();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Doctor>> Get(int id)
         {
-            Doctor doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Id == id);
+            Doctor doctor = await _context.Doctors.FirstOrDefaultAsync(x => x.Id == id);
             if (doctor == null) return NotFound();
             return new ObjectResult(doctor);
         }
@@ -36,25 +36,25 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Doctor>> Post(Doctor doctor)
         {
             if (doctor == null) return BadRequest();
-            context.Doctors.Add(doctor);
-            await context.SaveChangesAsync();
+            _context.Doctors.Add(doctor);
+            await _context.SaveChangesAsync();
             return Ok(doctor);
         }
         [HttpPut]
         public async Task<ActionResult<Doctor>> Put(Doctor doctor)
         {
             if (doctor == null) return NotFound();
-            context.Update(doctor);
-            await context.SaveChangesAsync();
+            _context.Update(doctor);
+            await _context.SaveChangesAsync();
             return Ok(doctor);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<Doctor>> Delete(int id)
         {
-            Doctor doctor = context.Doctors.FirstOrDefault(x => x.Id == id);
+            Doctor doctor = await _context.Doctors.FirstOrDefaultAsync(x => x.Id == id);
             if (doctor == null) return NotFound();
-            context.Doctors.Remove(doctor);
-            await context.SaveChangesAsync();
+            _context.Doctors.Remove(doctor);
+            await _context.SaveChangesAsync();
             return Ok(doctor);
         }
     

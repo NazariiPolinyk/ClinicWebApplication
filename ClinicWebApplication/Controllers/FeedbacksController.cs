@@ -13,22 +13,22 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
-        ClinicContext context;
+        private readonly ClinicContext _context;
 
         public FeedbacksController(ClinicContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Feedback>>> Get()
         {
-            return await context.Feedbacks.ToListAsync();
+            return await _context.Feedbacks.ToListAsync();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Feedback>> Get(int id)
         {
-            Feedback feedback = await context.Feedbacks.FirstOrDefaultAsync(x => x.Id == id);
+            Feedback feedback = await _context.Feedbacks.FirstOrDefaultAsync(x => x.Id == id);
             if (feedback == null) return NotFound();
             return new ObjectResult(feedback);
         }
@@ -36,25 +36,25 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
-            context.Feedbacks.Add(feedback);
-            await context.SaveChangesAsync();
+            _context.Feedbacks.Add(feedback);
+            await _context.SaveChangesAsync();
             return Ok(feedback);
         }
         [HttpPut]
         public async Task<ActionResult<Feedback>> Put(Feedback feedback)
         {
             if (feedback == null) return NotFound();
-            context.Update(feedback);
-            await context.SaveChangesAsync();
+            _context.Update(feedback);
+            await _context.SaveChangesAsync();
             return Ok(feedback);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<Feedback>> Delete(int id)
         {
-            Feedback feedback = context.Feedbacks.FirstOrDefault(x => x.Id == id);
+            Feedback feedback = await _context.Feedbacks.FirstOrDefaultAsync(x => x.Id == id);
             if (feedback == null) return NotFound(); 
-            context.Feedbacks.Remove(feedback);
-            await context.SaveChangesAsync();
+            _context.Feedbacks.Remove(feedback);
+            await _context.SaveChangesAsync();
             return Ok();
         }
     }

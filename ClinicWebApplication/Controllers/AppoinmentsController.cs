@@ -12,22 +12,22 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class AppoinmentsController : ControllerBase
     {
-        ClinicContext context;
+        private readonly ClinicContext _context;
 
         public AppoinmentsController(ClinicContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appoinment>>> Get()
         {
-            return await context.Appoinments.ToListAsync();
+            return await _context.Appoinments.ToListAsync();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Appoinment>> Get(int id)
         {
-            Appoinment appoinment = await context.Appoinments.FirstOrDefaultAsync(x => x.Id == id);
+            Appoinment appoinment = await _context.Appoinments.FirstOrDefaultAsync(x => x.Id == id);
             if (appoinment == null) return NotFound();
             return new ObjectResult(appoinment);
         }
@@ -35,25 +35,25 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Appoinment>> Post(Appoinment appoinment)
         {
             if (appoinment == null) return BadRequest();
-            context.Appoinments.Add(appoinment);
-            await context.SaveChangesAsync();
+            _context.Appoinments.Add(appoinment);
+            await _context.SaveChangesAsync();
             return Ok(appoinment);
         }
         [HttpPut]
         public async Task<ActionResult<Appoinment>> Put(Appoinment appoinment)
         {
             if (appoinment == null) return NotFound();
-            context.Update(appoinment);
-            await context.SaveChangesAsync();
+            _context.Update(appoinment);
+            await _context.SaveChangesAsync();
             return Ok(appoinment);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<Appoinment>> Delete(int id)
         {
-            Appoinment appoinment = context.Appoinments.FirstOrDefault(x => x.Id == id);
+            Appoinment appoinment = await _context.Appoinments.FirstOrDefaultAsync(x => x.Id == id);
             if (appoinment == null) NotFound();
-            context.Appoinments.Remove(appoinment);
-            await context.SaveChangesAsync();
+            _context.Appoinments.Remove(appoinment);
+            await _context.SaveChangesAsync();
             return Ok();
         }
     }
