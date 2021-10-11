@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ClinicWebApplication.Models
 {
-    public partial class Appoinment
+    public partial class Appoinment : IModel
     {
         public int Id { get; set; }
         public int PatientId { get; set; }

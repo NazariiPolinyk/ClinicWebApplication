@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClinicWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
+using ClinicWebApplication.Repository;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicWebApplication.Controllers
 {
@@ -13,22 +15,27 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
-        private readonly ClinicContext _context;
+        private IRepository<Feedback> _feedbackRepository;
 
+        [ActivatorUtilitiesConstructor]
         public FeedbacksController(ClinicContext context)
         {
-            _context = context;
+            _feedbackRepository = new ClinicRepository<Feedback>(context, context.Feedbacks);
+        }
+        public FeedbacksController(IRepository<Feedback> feedbackRepository)
+        {
+            _feedbackRepository = feedbackRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Feedback>>> Get()
         {
-            return await _context.Feedbacks.ToListAsync();
+            return await _feedbackRepository.GetAll().ToListAsync();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Feedback>> Get(int id)
         {
-            Feedback feedback = await _context.Feedbacks.FirstOrDefaultAsync(x => x.Id == id);
+            Feedback feedback = await _feedbackRepository.GetById(id);
             if (feedback == null) return NotFound();
             return new ObjectResult(feedback);
         }
@@ -36,25 +43,26 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
-            _context.Feedbacks.Add(feedback);
-            await _context.SaveChangesAsync();
+            _feedbackRepository.Insert(feedback);
+            await Task.Run(() => _feedbackRepository.Save());
             return Ok(feedback);
         }
         [HttpPut]
         public async Task<ActionResult<Feedback>> Put(Feedback feedback)
         {
-            if (feedback == null) return NotFound();
-            _context.Update(feedback);
-            await _context.SaveChangesAsync();
+            if (feedback == null) return BadRequest();
+            if (!_feedbackRepository.GetAll().Any(x => x.Id == feedback.Id)) return NotFound();
+            _feedbackRepository.Update(feedback);
+            await Task.Run(() => _feedbackRepository.Save());
             return Ok(feedback);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<Feedback>> Delete(int id)
         {
-            Feedback feedback = await _context.Feedbacks.FirstOrDefaultAsync(x => x.Id == id);
-            if (feedback == null) return NotFound(); 
-            _context.Feedbacks.Remove(feedback);
-            await _context.SaveChangesAsync();
+            Feedback feedback = await _feedbackRepository.GetById(id);
+            if (feedback == null) return NotFound();
+            _feedbackRepository.Delete(id);
+            await Task.Run(() => _feedbackRepository.Save());
             return Ok();
         }
     }

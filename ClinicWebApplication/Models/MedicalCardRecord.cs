@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ClinicWebApplication.Models
 {
-    public partial class MedicalCardRecord
+    public partial class MedicalCardRecord : IModel
     {
         public int Id { get; set; }
         public int PatientId { get; set; }

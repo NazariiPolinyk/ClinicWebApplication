@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClinicWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
+using ClinicWebApplication.Repository;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicWebApplication.Controllers
 {
@@ -12,22 +14,27 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class AppoinmentsController : ControllerBase
     {
-        private readonly ClinicContext _context;
+        private IRepository<Appoinment> _appoinmentRepository;
 
+        [ActivatorUtilitiesConstructor]
         public AppoinmentsController(ClinicContext context)
         {
-            _context = context;
+            _appoinmentRepository = new ClinicRepository<Appoinment>(context, context.Appoinments);
+        }
+        public AppoinmentsController(IRepository<Appoinment> appoinmentRepository)
+        {
+            _appoinmentRepository = appoinmentRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appoinment>>> Get()
         {
-            return await _context.Appoinments.ToListAsync();
+            return await _appoinmentRepository.GetAll().ToListAsync();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Appoinment>> Get(int id)
         {
-            Appoinment appoinment = await _context.Appoinments.FirstOrDefaultAsync(x => x.Id == id);
+            Appoinment appoinment = await _appoinmentRepository.GetById(id);
             if (appoinment == null) return NotFound();
             return new ObjectResult(appoinment);
         }
@@ -35,25 +42,26 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Appoinment>> Post(Appoinment appoinment)
         {
             if (appoinment == null) return BadRequest();
-            _context.Appoinments.Add(appoinment);
-            await _context.SaveChangesAsync();
+            _appoinmentRepository.Insert(appoinment);
+            await Task.Run(() => _appoinmentRepository.Save());
             return Ok(appoinment);
         }
         [HttpPut]
         public async Task<ActionResult<Appoinment>> Put(Appoinment appoinment)
         {
-            if (appoinment == null) return NotFound();
-            _context.Update(appoinment);
-            await _context.SaveChangesAsync();
+            if (appoinment == null) return BadRequest();
+            if (!_appoinmentRepository.GetAll().Any(x => x.Id == appoinment.Id)) return NotFound();
+            _appoinmentRepository.Update(appoinment);
+            await Task.Run(() => _appoinmentRepository.Save());
             return Ok(appoinment);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult<Appoinment>> Delete(int id)
         {
-            Appoinment appoinment = await _context.Appoinments.FirstOrDefaultAsync(x => x.Id == id);
+            Appoinment appoinment = await _appoinmentRepository.GetById(id);
             if (appoinment == null) NotFound();
-            _context.Appoinments.Remove(appoinment);
-            await _context.SaveChangesAsync();
+            _appoinmentRepository.Delete(id);
+            await Task.Run(() => _appoinmentRepository.Save());
             return Ok();
         }
     }
