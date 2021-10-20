@@ -30,7 +30,7 @@ namespace ClinicWebApplication
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ClinicContext>(options => options.UseSqlServer(connection));
-
+            //services.AddTransient();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

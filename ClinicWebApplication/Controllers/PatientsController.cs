@@ -17,14 +17,9 @@ namespace ClinicWebApplication.Controllers
     {
         private IRepository<Patient> _patientRepository;
 
-        [ActivatorUtilitiesConstructor]
         public PatientsController(ClinicContext context)
         {
-            _patientRepository = new ClinicRepository<Patient>(context, context.Patients);
-        }
-        public PatientsController(IRepository<Patient> patientRepository)
-        {
-            _patientRepository = patientRepository;
+            _patientRepository = new ClinicRepository<Patient>(context);
         }
 
         [HttpGet]

@@ -17,14 +17,9 @@ namespace ClinicWebApplication.Controllers
     {
         private IRepository<Feedback> _feedbackRepository;
 
-        [ActivatorUtilitiesConstructor]
         public FeedbacksController(ClinicContext context)
         {
-            _feedbackRepository = new ClinicRepository<Feedback>(context, context.Feedbacks);
-        }
-        public FeedbacksController(IRepository<Feedback> feedbackRepository)
-        {
-            _feedbackRepository = feedbackRepository;
+            _feedbackRepository = new ClinicRepository<Feedback>(context);
         }
 
         [HttpGet]

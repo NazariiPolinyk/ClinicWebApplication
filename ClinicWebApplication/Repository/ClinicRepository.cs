@@ -9,16 +9,16 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicWebApplication.Repository
 {
     public class ClinicRepository<T> : IRepository<T> 
-        where T : IModel
+        where T : class, IModel
     {
         private bool disposedValue = false;
         private readonly ClinicContext _context;
-        private IQueryable<T> _dbSet;
+        private DbSet<T> _dbSet;
 
-        public ClinicRepository(ClinicContext context, IQueryable<T> dbSet)
+        public ClinicRepository(ClinicContext context)
         {
             _context = context;
-            _dbSet = dbSet;
+            _dbSet = context.Set<T>();
         }
 
         public IQueryable<T> GetAll()

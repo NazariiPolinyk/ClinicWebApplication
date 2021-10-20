@@ -17,14 +17,9 @@ namespace ClinicWebApplication.Controllers
     {
         private IRepository<MedicalCardRecord> _medicalCardRecordRepository;
 
-        [ActivatorUtilitiesConstructor]
         public MedicalCardRecordsController(ClinicContext context)
         {
-            _medicalCardRecordRepository = new ClinicRepository<MedicalCardRecord>(context, context.MedicalCardRecords);
-        }
-        public MedicalCardRecordsController(IRepository<MedicalCardRecord> medicalCardRecordRepository)
-        {
-            _medicalCardRecordRepository = medicalCardRecordRepository;
+            _medicalCardRecordRepository = new ClinicRepository<MedicalCardRecord>(context);
         }
 
         [HttpGet]

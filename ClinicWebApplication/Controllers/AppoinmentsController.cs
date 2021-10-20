@@ -16,14 +16,9 @@ namespace ClinicWebApplication.Controllers
     {
         private IRepository<Appoinment> _appoinmentRepository;
 
-        [ActivatorUtilitiesConstructor]
         public AppoinmentsController(ClinicContext context)
         {
-            _appoinmentRepository = new ClinicRepository<Appoinment>(context, context.Appoinments);
-        }
-        public AppoinmentsController(IRepository<Appoinment> appoinmentRepository)
-        {
-            _appoinmentRepository = appoinmentRepository;
+            _appoinmentRepository = new ClinicRepository<Appoinment>(context);
         }
 
         [HttpGet]
