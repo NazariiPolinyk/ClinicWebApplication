@@ -11,29 +11,26 @@ namespace ClinicWebApplication.Repository
     public class ClinicRepository<T> : IRepository<T> 
         where T : class, IEntity
     {
-        private bool disposedValue = false;
         private readonly ClinicContext _context;
-        private DbSet<T> _dbSet;
 
         public ClinicRepository(ClinicContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>();
         }
 
         public IQueryable<T> GetAll()
         {
-            return _dbSet;
+            return _context.Set<T>();
         }
 
         public Task<T> GetById(int id)
         {
-            return _dbSet.FirstOrDefaultAsync(x => x.Id == id);
+            return _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public void Insert(T dataObject)
         {
-            _dbSet.ToList().Add(dataObject);
+            _context.Set<T>().ToList().Add(dataObject);
         }
 
         public void Update(T dataObject)
@@ -42,40 +39,12 @@ namespace ClinicWebApplication.Repository
         }
         public void Delete(int id)
         {
-            T dataObject = _dbSet.FirstOrDefault(x => x.Id == id);
-            _dbSet.ToList().Remove(dataObject);
+            T dataObject = _context.Set<T>().FirstOrDefault(x => x.Id == id);
+            _context.Set<T>().ToList().Remove(dataObject);
         }
         public void Save()
         {
             _context.SaveChangesAsync();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
-            }
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~ClinicRepository()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

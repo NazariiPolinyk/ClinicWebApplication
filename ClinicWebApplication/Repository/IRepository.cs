@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ClinicWebApplication.Repository
 {
-    public interface IRepository<T> : IDisposable
+    public interface IRepository<T>
     {
         IQueryable<T> GetAll();
         Task<T> GetById(int id);
