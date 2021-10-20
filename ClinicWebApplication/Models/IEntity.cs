@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ClinicWebApplication.Models
 {
-    public interface IModel
+    public interface IEntity
     {
         public int Id { get; set; }
     }

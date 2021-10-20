@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ClinicWebApplication.Models
 {
-    public partial class Feedback : IModel
+    public partial class Feedback : IEntity
     {
         public int Id { get; set; }
         public int DoctorId { get; set; }

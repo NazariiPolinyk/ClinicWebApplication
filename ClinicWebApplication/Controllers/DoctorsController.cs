@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ClinicWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Repository;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace ClinicWebApplication.Controllers
 {
@@ -15,11 +15,11 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class DoctorsController : ControllerBase
     {
-        private IRepository<Doctor> _doctorRepository;
+        private readonly IRepository<Doctor> _doctorRepository;
 
-        public DoctorsController(ClinicContext context)
+        public DoctorsController(IRepository<Doctor> doctorRepository)
         {
-            _doctorRepository = new ClinicRepository<Doctor>(context);
+            _doctorRepository = doctorRepository;
         }
 
         [HttpGet]

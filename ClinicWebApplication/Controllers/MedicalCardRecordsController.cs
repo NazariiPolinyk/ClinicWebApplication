@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ClinicWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Repository;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace ClinicWebApplication.Controllers
 {
@@ -15,11 +15,11 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class MedicalCardRecordsController : ControllerBase
     {
-        private IRepository<MedicalCardRecord> _medicalCardRecordRepository;
+        private readonly IRepository<MedicalCardRecord> _medicalCardRecordRepository;
 
-        public MedicalCardRecordsController(ClinicContext context)
+        public MedicalCardRecordsController(IRepository<MedicalCardRecord> medicalCardRecordRepository)
         {
-            _medicalCardRecordRepository = new ClinicRepository<MedicalCardRecord>(context);
+            _medicalCardRecordRepository = medicalCardRecordRepository;
         }
 
         [HttpGet]

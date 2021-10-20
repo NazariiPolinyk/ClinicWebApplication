@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicWebApplication.Repository
 {
     public class ClinicRepository<T> : IRepository<T> 
-        where T : class, IModel
+        where T : class, IEntity
     {
         private bool disposedValue = false;
         private readonly ClinicContext _context;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ClinicWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Repository;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace ClinicWebApplication.Controllers
 {
@@ -15,11 +15,11 @@ namespace ClinicWebApplication.Controllers
     [ApiController]
     public class FeedbacksController : ControllerBase
     {
-        private IRepository<Feedback> _feedbackRepository;
+        private readonly IRepository<Feedback> _feedbackRepository;
 
-        public FeedbacksController(ClinicContext context)
+        public FeedbacksController(IRepository<Feedback> feedbackRepository)
         {
-            _feedbackRepository = new ClinicRepository<Feedback>(context);
+            _feedbackRepository = feedbackRepository;
         }
 
         [HttpGet]

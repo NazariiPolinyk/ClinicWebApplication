@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ClinicWebApplication.Models
 {
-    public partial class Patient : IModel
+    public partial class Patient : IEntity
     {
         public Patient()
         {

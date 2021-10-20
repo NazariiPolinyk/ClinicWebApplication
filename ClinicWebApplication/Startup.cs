@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClinicWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
+using ClinicWebApplication.Repository;
 
 namespace ClinicWebApplication
 {
@@ -22,14 +23,15 @@ namespace ClinicWebApplication
         {
             Configuration = configuration;
         }
-
+        
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<ClinicContext>(options => options.UseSqlServer(connection));
+
+            services.AddScoped(typeof(IRepository<>), typeof(ClinicRepository<>));
+            services.AddDbContext<ClinicContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddTransient();
             services.AddControllers();
             services.AddSwaggerGen(c =>
