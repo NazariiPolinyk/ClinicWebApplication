@@ -46,7 +46,7 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Doctor>> Put(Doctor doctor)
         {
             if (doctor == null) return BadRequest();
-            if (_doctorRepository.GetAll().Any(x => x.Id == doctor.Id)) return NotFound();
+            if (!_doctorRepository.GetAll().Any(x => x.Id == doctor.Id)) return NotFound();
             _doctorRepository.Update(doctor);
             await Task.Run(() => _doctorRepository.Save());
             return Ok(doctor);
