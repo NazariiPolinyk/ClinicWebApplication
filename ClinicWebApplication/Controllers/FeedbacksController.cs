@@ -58,7 +58,7 @@ namespace ClinicWebApplication.Controllers
             if (feedback == null) return NotFound();
             _feedbackRepository.Delete(id);
             await Task.Run(() => _feedbackRepository.Save());
-            return Ok();
+            return Ok(feedback);
         }
     }
 }
