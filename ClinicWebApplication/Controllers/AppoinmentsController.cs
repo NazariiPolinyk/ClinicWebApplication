@@ -53,10 +53,10 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Appoinment>> Delete(int id)
         {
             Appoinment appoinment = await _appoinmentRepository.GetById(id);
-            if (appoinment == null) NotFound();
+            if (appoinment == null) return NotFound();
             _appoinmentRepository.Delete(id);
             await Task.Run(() => _appoinmentRepository.Save());
-            return Ok();
+            return Ok(appoinment);
         }
     }
 }
