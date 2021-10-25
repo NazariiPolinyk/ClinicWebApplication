@@ -21,9 +21,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Appoinment>>> Get()
+        public IEnumerable<Appoinment> Get()
         {
-            return await _appoinmentRepository.GetAll().ToListAsync();
+            return _appoinmentRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Appoinment>> Get(int id)
@@ -36,17 +36,15 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Appoinment>> Post(Appoinment appoinment)
         {
             if (appoinment == null) return BadRequest();
-            _appoinmentRepository.Insert(appoinment);
-            await Task.Run(() => _appoinmentRepository.Save());
+            await _appoinmentRepository.Insert(appoinment);
             return Ok(appoinment);
         }
         [HttpPut]
         public async Task<ActionResult<Appoinment>> Put(Appoinment appoinment)
         {
             if (appoinment == null) return BadRequest();
-            if (!_appoinmentRepository.GetAll().Any(x => x.Id == appoinment.Id)) return NotFound();
-            _appoinmentRepository.Update(appoinment);
-            await Task.Run(() => _appoinmentRepository.Save());
+            if (await _appoinmentRepository.GetById(appoinment.Id) == null) return NotFound();
+            await _appoinmentRepository.Update(appoinment);
             return Ok(appoinment);
         }
         [HttpDelete("{id}")]
@@ -54,9 +52,8 @@ namespace ClinicWebApplication.Controllers
         {
             Appoinment appoinment = await _appoinmentRepository.GetById(id);
             if (appoinment == null) return NotFound();
-            _appoinmentRepository.Delete(id);
-            await Task.Run(() => _appoinmentRepository.Save());
-            return Ok(appoinment);
+            await _appoinmentRepository.Delete(id);
+            return Ok();
         }
     }
 }

@@ -23,9 +23,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Feedback>>> Get()
+        public IEnumerable<Feedback> Get()
         {
-            return await _feedbackRepository.GetAll().ToListAsync();
+            return _feedbackRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Feedback>> Get(int id)
@@ -38,17 +38,15 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
-            _feedbackRepository.Insert(feedback);
-            await Task.Run(() => _feedbackRepository.Save());
+            await _feedbackRepository.Insert(feedback);
             return Ok(feedback);
         }
         [HttpPut]
         public async Task<ActionResult<Feedback>> Put(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
-            if (!_feedbackRepository.GetAll().Any(x => x.Id == feedback.Id)) return NotFound();
-            _feedbackRepository.Update(feedback);
-            await Task.Run(() => _feedbackRepository.Save());
+            if (await _feedbackRepository.GetById(feedback.Id) == null) return NotFound();
+            await _feedbackRepository.Update(feedback);
             return Ok(feedback);
         }
         [HttpDelete("{id}")]
@@ -56,9 +54,8 @@ namespace ClinicWebApplication.Controllers
         {
             Feedback feedback = await _feedbackRepository.GetById(id);
             if (feedback == null) return NotFound();
-            _feedbackRepository.Delete(id);
-            await Task.Run(() => _feedbackRepository.Save());
-            return Ok(feedback);
+            await _feedbackRepository.Delete(id);
+            return Ok();
         }
     }
 }

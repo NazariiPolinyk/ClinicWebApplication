@@ -23,9 +23,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MedicalCardRecord>>> Get()
+        public IEnumerable<MedicalCardRecord> Get()
         {
-            return await _medicalCardRecordRepository.GetAll().ToListAsync();
+            return _medicalCardRecordRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<MedicalCardRecord>> Get(int id)
@@ -38,17 +38,15 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<MedicalCardRecord>> Post(MedicalCardRecord medicalCardRecord)
         {
             if (medicalCardRecord == null) return BadRequest();
-            _medicalCardRecordRepository.Insert(medicalCardRecord);
-            await Task.Run(() => _medicalCardRecordRepository.Save());
+            await _medicalCardRecordRepository.Insert(medicalCardRecord);
             return Ok(medicalCardRecord);
         }
         [HttpPut]
         public async Task<ActionResult<MedicalCardRecord>> Put(MedicalCardRecord medicalCardRecord)
         {
             if (medicalCardRecord == null) return BadRequest();
-            if (!_medicalCardRecordRepository.GetAll().Any(x => x.Id == medicalCardRecord.Id)) return NotFound();
-            _medicalCardRecordRepository.Update(medicalCardRecord);
-            await Task.Run(() => _medicalCardRecordRepository.Save());
+            if (await _medicalCardRecordRepository.GetById(medicalCardRecord.Id) == null) return NotFound();
+            await _medicalCardRecordRepository.Update(medicalCardRecord);
             return Ok(medicalCardRecord);
         }
         [HttpDelete("{id}")]
@@ -56,9 +54,8 @@ namespace ClinicWebApplication.Controllers
         {
             MedicalCardRecord medicalCardRecord = await _medicalCardRecordRepository.GetById(id);
             if (medicalCardRecord == null) return NotFound();
-            _medicalCardRecordRepository.Delete(id);
-            await Task.Run(() => _medicalCardRecordRepository.Save());
-            return Ok(medicalCardRecord);
+            await _medicalCardRecordRepository.Delete(id);
+            return Ok();
         }
     }
 }

@@ -22,9 +22,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Patient>>> Get()
+        public IEnumerable<Patient> Get()
         {
-            return await _patientRepository.GetAll().ToListAsync();
+            return _patientRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Patient>> Get(int id)
@@ -37,17 +37,16 @@ namespace ClinicWebApplication.Controllers
         public async Task<ActionResult<Patient>> Post(Patient patient)
         {
             if (patient == null) return BadRequest();
-            _patientRepository.Insert(patient);
-            await Task.Run(() => _patientRepository.Save());
+            await _patientRepository.Insert(patient);
             return Ok(patient);
         }
         [HttpPut]
         public async Task<ActionResult<Patient>> Put(Patient patient)
         {
             if (patient == null) return BadRequest();
-            if (!_patientRepository.GetAll().Any(x => x.Id == patient.Id)) return NotFound();
-            _patientRepository.Update(patient);
-            await Task.Run(() => _patientRepository.Save());
+            var p = await _patientRepository.GetById(patient.Id);
+            if (await _patientRepository.GetById(patient.Id) == null) return NotFound();
+            await _patientRepository.Update(patient);
             return Ok(patient);
         }
         [HttpDelete("{id}")]
@@ -55,9 +54,8 @@ namespace ClinicWebApplication.Controllers
         {
             Patient patient = await _patientRepository.GetById(id);
             if (patient == null) return NotFound();
-            _patientRepository.Delete(id);
-            await Task.Run(() => _patientRepository.Save());
-            return Ok(patient);
+            await _patientRepository.Delete(id);
+            return Ok();
         }
     }
 }
