@@ -27,16 +27,16 @@ namespace ClinicWebApplication.Tests
         }
 
         [Fact]
-        public async void GetAllReturnListOfMedicalCardRecords()
+        public void GetAllReturnListOfMedicalCardRecords()
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new MedicalCardRecordsController(repo.Object);
 
-            ActionResult<IEnumerable<MedicalCardRecord>> result = await controller.Get();
+            IEnumerable<MedicalCardRecord> result = controller.Get();
 
-            Assert.Equal(5, result.Value.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -99,9 +99,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdateMedicalCardRecordReturnsOkResult()
         {
+            int testMedicalCardRecordId = 1;
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testMedicalCardRecordId))
+                .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
             var controller = new MedicalCardRecordsController(repo.Object);
 
             var actionResult = await controller.Put(new MedicalCardRecord { Id = 1, PatientId = 1, DoctorId = 1, Diagnosis = "MedicalCardRecord12131", DateTime = new DateTime(2021, 4, 2) });
@@ -114,7 +116,6 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new MedicalCardRecordsController(repo.Object);
 
             var actionResult = await controller.Put(null);
@@ -125,9 +126,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdateMedicalCardRecordReturnsNotFoundResult()
         {
+            int testMedicalCardRecordId = 6;
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testMedicalCardRecordId))
+                .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
             var controller = new MedicalCardRecordsController(repo.Object);
 
             var actionResult = await controller.Put(new MedicalCardRecord { Id = 6, PatientId = 1, DoctorId = 1, Diagnosis = "MedicalCardRecord1", DateTime = new DateTime(2021, 4, 2) });
@@ -147,7 +150,7 @@ namespace ClinicWebApplication.Tests
 
             var actionResult = await controller.Delete(testMedicalCardRecordId);
 
-            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.IsType<OkResult>(actionResult.Result);
         }
 
         [Fact]

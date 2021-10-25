@@ -26,16 +26,16 @@ namespace ClinicWebApplication.Tests
         }
 
         [Fact]
-        public async void GetAllReturnListOfAppoinments()
+        public void GetAllReturnListOfAppoinments()
         {
             var repo = new Mock<IRepository<Appoinment>>();
             var mock = GetTestAppoinments().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new AppoinmentsController(repo.Object);
 
-            ActionResult<IEnumerable<Appoinment>> result = await controller.Get();
+            IEnumerable<Appoinment> result = controller.Get();
 
-            Assert.Equal(5, result.Value.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -98,9 +98,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdateAppoinmentReturnsOkResult()
         {
+            int testAppoinmentId = 1;
             var repo = new Mock<IRepository<Appoinment>>();
             var mock = GetTestAppoinments().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testAppoinmentId))
+                .ReturnsAsync(GetTestAppoinments().FirstOrDefault(p => p.Id == testAppoinmentId));
             var controller = new AppoinmentsController(repo.Object);
 
             var actionResult = await controller.Put(new Appoinment { Id = 1, PatientId = 1, DoctorId = 1, Description = "complaint12131", IsEnable = true });
@@ -113,7 +115,6 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<Appoinment>>();
             var mock = GetTestAppoinments().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new AppoinmentsController(repo.Object);
 
             var actionResult = await controller.Put(null);
@@ -124,9 +125,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdateAppoinmentReturnsNotFoundResult()
         {
+            int testAppoinmentId = 6;
             var repo = new Mock<IRepository<Appoinment>>();
             var mock = GetTestAppoinments().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testAppoinmentId))
+                .ReturnsAsync(GetTestAppoinments().FirstOrDefault(p => p.Id == testAppoinmentId));
             var controller = new AppoinmentsController(repo.Object);
 
             var actionResult = await controller.Put(new Appoinment { Id = 6, PatientId = 1, DoctorId = 1, Description = "complaint1", IsEnable = true });
@@ -146,7 +149,7 @@ namespace ClinicWebApplication.Tests
 
             var actionResult = await controller.Delete(testAppoinmentId);
 
-            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.IsType<OkResult>(actionResult.Result);
         }
 
         [Fact]

@@ -26,16 +26,16 @@ namespace ClinicWebApplication.Tests
         }
 
         [Fact]
-        public async void GetAllReturnListOfFeedbacks()
+        public void GetAllReturnListOfFeedbacks()
         {
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new FeedbacksController(repo.Object);
 
-            ActionResult<IEnumerable<Feedback>> result = await controller.Get();
+            IEnumerable<Feedback> result = controller.Get();
 
-            Assert.Equal(5, result.Value.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -97,9 +97,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdateFeedbackReturnsOkResult()
         {
+            int testFeedbackId = 1;
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testFeedbackId))
+                .ReturnsAsync(GetTestFeedbacks().FirstOrDefault(p => p.Id == testFeedbackId));
             var controller = new FeedbacksController(repo.Object);
 
             var actionResult = await controller.Put(new Feedback { Id = 1, PatientId = 1, DoctorId = 1, FeedbackText = "feedback12131" });
@@ -112,7 +114,6 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new FeedbacksController(repo.Object);
 
             var actionResult = await controller.Put(null);
@@ -123,9 +124,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdateFeedbackReturnsNotFoundResult()
         {
+            int testFeedbackId = 6;
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testFeedbackId))
+                .ReturnsAsync(GetTestFeedbacks().FirstOrDefault(p => p.Id == testFeedbackId));
             var controller = new FeedbacksController(repo.Object);
 
             var actionResult = await controller.Put(new Feedback { Id = 6, PatientId = 1, DoctorId = 1, FeedbackText = "feedback1" });
@@ -145,7 +148,7 @@ namespace ClinicWebApplication.Tests
 
             var actionResult = await controller.Delete(testFeedbackId);
 
-            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.IsType<OkResult>(actionResult.Result);
         }
 
         [Fact]

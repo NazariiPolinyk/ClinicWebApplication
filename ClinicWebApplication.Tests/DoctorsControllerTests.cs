@@ -26,16 +26,16 @@ namespace ClinicWebApplication.Tests
         }
 
         [Fact]
-        public async void GetAllReturnListOfPatients()
+        public void GetAllReturnListOfPatients()
         {
             var repo = new Mock<IRepository<Doctor>>();
             var mock = GetTestDoctors().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new DoctorsController(repo.Object);
 
-            ActionResult<IEnumerable<Doctor>> result = await controller.Get();
+            IEnumerable<Doctor> result = controller.Get();
 
-            Assert.Equal(5, result.Value.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -61,14 +61,14 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void GetPatientReturnNotFoundResult()
         {
-            int testPatientId = 0;
+            int testDoctorId = 0;
             var repo = new Mock<IRepository<Doctor>>();
             var mock = GetTestDoctors().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetById(testPatientId))
-                .ReturnsAsync(GetTestDoctors().FirstOrDefault(p => p.Id == testPatientId));
+            repo.Setup(x => x.GetById(testDoctorId))
+                .ReturnsAsync(GetTestDoctors().FirstOrDefault(p => p.Id == testDoctorId));
             var controller = new DoctorsController(repo.Object);
 
-            var actionResult = await controller.Get(testPatientId);
+            var actionResult = await controller.Get(testDoctorId);
 
             Assert.IsType<NotFoundResult>(actionResult.Result);
         }
@@ -98,9 +98,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdatePatientReturnsOkResult()
         {
+            int testDoctorId = 1;
             var repo = new Mock<IRepository<Doctor>>();
             var mock = GetTestDoctors().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testDoctorId))
+                .ReturnsAsync(GetTestDoctors().FirstOrDefault(p => p.Id == testDoctorId));
             var controller = new DoctorsController(repo.Object);
 
             var actionResult = await controller.Put(new Doctor { Id = 1, Name = "Nazar", Experience = 14, Category = "Cardiology", Description = "Bad doctor" });
@@ -113,7 +115,6 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<Doctor>>();
             var mock = GetTestDoctors().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
             var controller = new DoctorsController(repo.Object);
 
             var actionResult = await controller.Put(null);
@@ -124,9 +125,11 @@ namespace ClinicWebApplication.Tests
         [Fact]
         public async void UpdatePatientReturnsNotFoundResult()
         {
+            int testDoctorId = 8;
             var repo = new Mock<IRepository<Doctor>>();
             var mock = GetTestDoctors().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetById(testDoctorId))
+                .ReturnsAsync(GetTestDoctors().FirstOrDefault(p => p.Id == testDoctorId));
             var controller = new DoctorsController(repo.Object);
 
             var actionResult = await controller.Put(new Doctor { Id = 8, Name = "Nazar", Experience = 14, Category = "Cardiology", Description = "Bad doctor" });
@@ -146,7 +149,7 @@ namespace ClinicWebApplication.Tests
 
             var actionResult = await controller.Delete(testDoctortId);
 
-            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.IsType<OkResult>(actionResult.Result);
         }
 
         [Fact]
