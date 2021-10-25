@@ -7,11 +7,10 @@ namespace ClinicWebApplication.Repository
 {
     public interface IRepository<T>
     {
-        IQueryable<T> GetAll();
+        IEnumerable<T> GetAll();
         Task<T> GetById(int id);
-        void Insert(T dataObject);
-        void Update(T dataObject);
-        void Delete(int id);
-        void Save();
+        Task Insert(T dataObject);
+        Task Update(T dataObject);
+        Task Delete(int id);
     }
 }

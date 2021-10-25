@@ -18,33 +18,32 @@ namespace ClinicWebApplication.Repository
             _context = context;
         }
 
-        public IQueryable<T> GetAll()
+        public IEnumerable<T> GetAll()
         {
-            return _context.Set<T>();
+            return _context.Set<T>().ToList();
         }
 
         public Task<T> GetById(int id)
         {
-            return _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+            return _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public void Insert(T dataObject)
+        public async Task Insert(T dataObject)
         {
-            _context.Set<T>().ToList().Add(dataObject);
+            _context.Set<T>().Add(dataObject);
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(T dataObject)
+        public async Task Update(T dataObject)
         {
             _context.Entry(dataObject).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
             T dataObject = _context.Set<T>().FirstOrDefault(x => x.Id == id);
-            _context.Set<T>().ToList().Remove(dataObject);
-        }
-        public void Save()
-        {
-            _context.SaveChangesAsync();
+            _context.Set<T>().Remove(dataObject);
+            await _context.SaveChangesAsync();
         }
     }
 }
