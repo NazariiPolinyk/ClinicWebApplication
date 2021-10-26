@@ -23,9 +23,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Doctor> Get()
+        public async Task<IEnumerable<Doctor>> Get()
         {
-            return _doctorRepository.GetAll();
+            return await _doctorRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Doctor>> Get(int id)
@@ -54,7 +54,7 @@ namespace ClinicWebApplication.Controllers
         {
             Doctor doctor = await _doctorRepository.GetById(id);
             if (doctor == null) return NotFound();
-            await _doctorRepository.Delete(id);
+            await _doctorRepository.Delete(doctor);
             return Ok();
         }
     

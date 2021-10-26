@@ -8,6 +8,7 @@ using MockQueryable.Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ClinicWebApplication.Tests
 {
@@ -27,14 +28,14 @@ namespace ClinicWebApplication.Tests
         }
 
         [Fact]
-        public void GetAllReturnListOfMedicalCardRecords()
+        public async void GetAllReturnListOfMedicalCardRecords()
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
             var controller = new MedicalCardRecordsController(repo.Object);
 
-            IEnumerable<MedicalCardRecord> result = controller.Get();
+            IEnumerable<MedicalCardRecord> result = await controller.Get();
 
             Assert.Equal(5, result.Count());
         }
@@ -158,7 +159,7 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
             var controller = new MedicalCardRecordsController(repo.Object);
 
             var actionResult = await controller.Delete(7);

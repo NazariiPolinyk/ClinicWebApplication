@@ -21,9 +21,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Appoinment> Get()
+        public async Task<IEnumerable<Appoinment>> Get()
         {
-            return _appoinmentRepository.GetAll();
+            return await _appoinmentRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Appoinment>> Get(int id)
@@ -52,7 +52,7 @@ namespace ClinicWebApplication.Controllers
         {
             Appoinment appoinment = await _appoinmentRepository.GetById(id);
             if (appoinment == null) return NotFound();
-            await _appoinmentRepository.Delete(id);
+            await _appoinmentRepository.Delete(appoinment);
             return Ok();
         }
     }

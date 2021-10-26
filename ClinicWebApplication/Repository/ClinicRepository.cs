@@ -18,9 +18,9 @@ namespace ClinicWebApplication.Repository
             _context = context;
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
-            return _context.Set<T>().ToList();
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
         public Task<T> GetById(int id)
@@ -39,9 +39,8 @@ namespace ClinicWebApplication.Repository
             _context.Entry(dataObject).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-        public async Task Delete(int id)
+        public async Task Delete(T dataObject)
         {
-            T dataObject = _context.Set<T>().FirstOrDefault(x => x.Id == id);
             _context.Set<T>().Remove(dataObject);
             await _context.SaveChangesAsync();
         }

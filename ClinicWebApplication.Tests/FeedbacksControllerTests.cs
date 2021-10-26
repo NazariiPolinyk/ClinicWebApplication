@@ -7,6 +7,7 @@ using MockQueryable.Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ClinicWebApplication.Tests
 {
@@ -26,14 +27,14 @@ namespace ClinicWebApplication.Tests
         }
 
         [Fact]
-        public void GetAllReturnListOfFeedbacks()
+        public async void GetAllReturnListOfFeedbacks()
         {
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
             var controller = new FeedbacksController(repo.Object);
 
-            IEnumerable<Feedback> result = controller.Get();
+            IEnumerable<Feedback> result = await controller.Get();
 
             Assert.Equal(5, result.Count());
         }
@@ -156,7 +157,7 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
-            repo.Setup(x => x.GetAll()).Returns(mock.Object);
+            repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
             var controller = new FeedbacksController(repo.Object);
 
             var actionResult = await controller.Delete(7);

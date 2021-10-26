@@ -23,9 +23,9 @@ namespace ClinicWebApplication.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Feedback> Get()
+        public async Task<IEnumerable<Feedback>> Get()
         {
-            return _feedbackRepository.GetAll();
+            return await _feedbackRepository.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Feedback>> Get(int id)
@@ -54,7 +54,7 @@ namespace ClinicWebApplication.Controllers
         {
             Feedback feedback = await _feedbackRepository.GetById(id);
             if (feedback == null) return NotFound();
-            await _feedbackRepository.Delete(id);
+            await _feedbackRepository.Delete(feedback);
             return Ok();
         }
     }
