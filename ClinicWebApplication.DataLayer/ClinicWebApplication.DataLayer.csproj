@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -11,14 +11,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClinicWebApplication.BusinessLayer\ClinicWebApplication.BusinessLayer.csproj" />
-    <ProjectReference Include="..\ClinicWebApplication.DataLayer\ClinicWebApplication.DataLayer.csproj" />
-    <ProjectReference Include="..\ClinicWebApplication.Infrastructure\ClinicWebApplication.Infrastructure.csproj" />
     <ProjectReference Include="..\ClinicWebApplication.Interfaces\ClinicWebApplication.Interfaces.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using Xunit;
-using ClinicWebApplication.Controllers;
-using ClinicWebApplication.Repository;
-using ClinicWebApplication.Models;
+using ClinicWebApplication.Infrastructure.Controllers;
+using ClinicWebApplication.Interfaces;
+using ClinicWebApplication.DataLayer.Models;
 using Moq;
 using MockQueryable.Moq;
 using System.Collections.Generic;

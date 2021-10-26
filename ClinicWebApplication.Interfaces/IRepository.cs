@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ClinicWebApplication.Repository
+namespace ClinicWebApplication.Interfaces
 {
     public interface IRepository<T>
     {

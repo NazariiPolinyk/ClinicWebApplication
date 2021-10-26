@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ClinicWebApplication.Migrations
+namespace ClinicWebApplication.DataLayer.Migrations
 {
     public partial class DeleteImageColumn : Migration
     {

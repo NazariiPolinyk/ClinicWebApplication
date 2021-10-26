@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ClinicWebApplication.Interfaces;
 
 #nullable disable
 
-namespace ClinicWebApplication.Models
+namespace ClinicWebApplication.DataLayer.Models
 {
     public partial class Feedback : IEntity
     {

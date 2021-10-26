@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ClinicWebApplication.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using ClinicWebApplication.Interfaces;
 
-namespace ClinicWebApplication.Repository
+namespace ClinicWebApplication.BusinessLayer.Repository
 {
     public class ClinicRepository<T> : IRepository<T> 
         where T : class, IEntity

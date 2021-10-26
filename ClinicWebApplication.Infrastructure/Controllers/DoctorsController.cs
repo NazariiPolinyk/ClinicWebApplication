@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ClinicWebApplication.Models;
+using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using ClinicWebApplication.Repository;
+using ClinicWebApplication.Interfaces; 
 
 
-namespace ClinicWebApplication.Controllers
+namespace ClinicWebApplication.Infrastructure.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
