@@ -47,7 +47,7 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<Feedback>>();
             var mock = GetTestFeedbacks().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testFeedbackId))
-                .ReturnsAsync(GetTestFeedbacks().FirstOrDefault(p => p.Id == testFeedbackId));
+                .ReturnsAsync(testFeedback);
             var controller = new FeedbacksController(repo.Object);
 
             var actionResult = await controller.Get(testFeedbackId);

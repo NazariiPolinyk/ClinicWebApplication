@@ -48,7 +48,7 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testMedicalCardRecordId))
-                .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
+                .ReturnsAsync(testMedicalCardRecord);
             var controller = new MedicalCardRecordsController(repo.Object);
 
             var actionResult = await controller.Get(testMedicalCardRecordId);

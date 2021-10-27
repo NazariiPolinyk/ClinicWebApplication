@@ -47,7 +47,7 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<Doctor>>();
             var mock = GetTestDoctors().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testDoctorId))
-                .ReturnsAsync(GetTestDoctors().FirstOrDefault(p => p.Id == testDoctorId));
+                .ReturnsAsync(testDoctor);
             var controller = new DoctorsController(repo.Object);
 
             var actionResult = await controller.Get(testDoctorId);
