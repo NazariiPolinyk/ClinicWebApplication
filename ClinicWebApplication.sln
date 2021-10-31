@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicWebApplication", "Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicWebApplication.Tests", "ClinicWebApplication.Tests\ClinicWebApplication.Tests.csproj", "{7AA87F03-F715-481C-A03A-F51380831A35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicWebApplication.Interfaces", "ClinicWebApplication.Interfaces\ClinicWebApplication.Interfaces.csproj", "{7871CF55-7883-48D0-8AF2-8F5E180AB0B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicWebApplication.Interfaces", "ClinicWebApplication.Interfaces\ClinicWebApplication.Interfaces.csproj", "{7871CF55-7883-48D0-8AF2-8F5E180AB0B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicWebApplication.DataLayer", "ClinicWebApplication.DataLayer\ClinicWebApplication.DataLayer.csproj", "{4E9C1AF6-2B1E-4759-9592-50488B6F28E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicWebApplication.DataLayer", "ClinicWebApplication.DataLayer\ClinicWebApplication.DataLayer.csproj", "{4E9C1AF6-2B1E-4759-9592-50488B6F28E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicWebApplication.Infrastructure", "ClinicWebApplication.Infrastructure\ClinicWebApplication.Infrastructure.csproj", "{72ADDC5E-3097-4926-B22E-8A659B89C159}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicWebApplication.Web", "ClinicWebApplication.Infrastructure\ClinicWebApplication.Web.csproj", "{72ADDC5E-3097-4926-B22E-8A659B89C159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicWebApplication.BusinessLayer", "ClinicWebApplication.BusinessLayer\ClinicWebApplication.BusinessLayer.csproj", "{A7C84EFB-C71A-4C14-9022-285FA73ED7A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClinicWebApplication.BusinessLayer", "ClinicWebApplication.BusinessLayer\ClinicWebApplication.BusinessLayer.csproj", "{A7C84EFB-C71A-4C14-9022-285FA73ED7A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

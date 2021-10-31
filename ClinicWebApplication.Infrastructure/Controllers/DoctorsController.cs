@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces; 
 
 
-namespace ClinicWebApplication.Infrastructure.Controllers
+namespace ClinicWebApplication.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

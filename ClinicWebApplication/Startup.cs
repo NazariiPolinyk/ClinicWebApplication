@@ -8,7 +8,7 @@ using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.BusinessLayer.Repository;
-using ClinicWebApplication.Infrastructure.Controllers;
+using ClinicWebApplication.Web.Controllers;
 
 
 namespace ClinicWebApplication

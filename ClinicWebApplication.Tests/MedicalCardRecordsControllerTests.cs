@@ -1,6 +1,6 @@
 ﻿using System;
 using Xunit;
-using ClinicWebApplication.Infrastructure.Controllers;
+using ClinicWebApplication.Web.Controllers;
 using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.DataLayer.Models;
 using Moq;
