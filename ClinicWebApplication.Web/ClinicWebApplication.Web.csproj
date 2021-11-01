@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <ApplicationIcon />
-    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,10 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ClinicWebApplication.DataLayer\ClinicWebApplication.DataLayer.csproj" />
     <ProjectReference Include="..\ClinicWebApplication.Interfaces\ClinicWebApplication.Interfaces.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>
