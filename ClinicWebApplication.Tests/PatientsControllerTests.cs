@@ -9,11 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace ClinicWebApplication.Tests
-{
+{    
     public class PatientsControllerTests
     {
+        private readonly IMapper mapper = UnitTestUtility.CreateTestMapper();
+
         private List<Patient> GetTestPatients()
         {
             var patients = new List<Patient>
@@ -33,9 +36,9 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<Patient>>();
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
-            IEnumerable<Patient> result = await controller.Get();
+            var result = await controller.Get();
 
             Assert.Equal(5, result.Count());
         }
@@ -49,10 +52,10 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testPatientId))
                 .ReturnsAsync(testPatient);
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Get(testPatientId);
-            var result = UnitTestUtility.GetObjectResultContent(actionResult);
+            var result = UnitTestUtility.GetTestObjectResultContent(actionResult);
 
             Assert.Equal(testPatient.Name, result.Name);
             Assert.Equal(testPatient.BirthDate, result.BirthDate);
@@ -67,7 +70,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testPatientId))
                 .ReturnsAsync(GetTestPatients().FirstOrDefault(p => p.Id == testPatientId));
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Get(testPatientId);
 
@@ -78,7 +81,7 @@ namespace ClinicWebApplication.Tests
         public async void AddPatientReturnsOkResult()
         {
             var repo = new Mock<IRepository<Patient>>();
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Post(new Patient { Id = 6, Name = "Ivan", BirthDate = new DateTime(1965, 10, 20), Phone = "0967755333" });
 
@@ -90,7 +93,7 @@ namespace ClinicWebApplication.Tests
         public async void AddPatientReturnsBadRequestResult()
         {
             var repo = new Mock<IRepository<Patient>>();
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Post(null);
 
@@ -105,7 +108,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testPatientId))
                 .ReturnsAsync(GetTestPatients().FirstOrDefault(p => p.Id == testPatientId));
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Put(new Patient { Id = 1, Name = "Nazar", BirthDate = new DateTime(1972, 7, 26), Phone = "0967755333" });
 
@@ -117,7 +120,7 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<Patient>>();
             var mock = GetTestPatients().AsQueryable().BuildMock();
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Put(null);
 
@@ -132,7 +135,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testPatientId))
                 .ReturnsAsync(GetTestPatients().FirstOrDefault(p => p.Id == testPatientId));
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Put(new Patient { Id = 6, Name = "Nazar", BirthDate = new DateTime(1972, 7, 26), Phone = "0967755333" });
 
@@ -147,7 +150,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testPatientId))
                 .ReturnsAsync(GetTestPatients().FirstOrDefault(p => p.Id == testPatientId));
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Delete(testPatientId);
 
@@ -160,7 +163,7 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<Patient>>();
             var mock = GetTestPatients().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
-            var controller = new PatientsController(repo.Object);
+            var controller = new PatientsController(repo.Object, mapper);
 
             var actionResult = await controller.Delete(6);
 

@@ -9,11 +9,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace ClinicWebApplication.Tests
 {
     public class MedicalCardRecordsControllerTests
     {
+        private readonly IMapper mapper = UnitTestUtility.CreateTestMapper();
         private List<MedicalCardRecord> GetTestMedicalCardRecords()
         {
             var medicalCardRecords = new List<MedicalCardRecord>
@@ -33,9 +35,9 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
-            IEnumerable<MedicalCardRecord> result = await controller.Get();
+            var result = await controller.Get();
 
             Assert.Equal(5, result.Count());
         }
@@ -49,13 +51,11 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testMedicalCardRecordId))
                 .ReturnsAsync(testMedicalCardRecord);
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Get(testMedicalCardRecordId);
-            var result = UnitTestUtility.GetObjectResultContent(actionResult);
+            var result = UnitTestUtility.GetTestObjectResultContent(actionResult);
 
-            Assert.Equal(testMedicalCardRecord.PatientId, result.PatientId);
-            Assert.Equal(testMedicalCardRecord.DoctorId, result.DoctorId);
             Assert.Equal(testMedicalCardRecord.Diagnosis, result.Diagnosis);
             Assert.Equal(testMedicalCardRecord.DateTime, result.DateTime);
         }
@@ -68,7 +68,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testMedicalCardRecordId))
                 .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Get(testMedicalCardRecordId);
 
@@ -79,7 +79,7 @@ namespace ClinicWebApplication.Tests
         public async void AddMedicalCardRecordReturnsOkResult()
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Post(new MedicalCardRecord { Id = 6, PatientId = 1, DoctorId = 1, Diagnosis = "MedicalCardRecord6", DateTime = new DateTime(2021, 4, 2) });
 
@@ -90,7 +90,7 @@ namespace ClinicWebApplication.Tests
         public async void AddMedicalCardRecordReturnsBadRequestResult()
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Post(null);
 
@@ -105,7 +105,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testMedicalCardRecordId))
                 .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Put(new MedicalCardRecord { Id = 1, PatientId = 1, DoctorId = 1, Diagnosis = "MedicalCardRecord12131", DateTime = new DateTime(2021, 4, 2) });
 
@@ -117,7 +117,7 @@ namespace ClinicWebApplication.Tests
         {
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Put(null);
 
@@ -132,7 +132,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testMedicalCardRecordId))
                 .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Put(new MedicalCardRecord { Id = 6, PatientId = 1, DoctorId = 1, Diagnosis = "MedicalCardRecord1", DateTime = new DateTime(2021, 4, 2) });
 
@@ -147,7 +147,7 @@ namespace ClinicWebApplication.Tests
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetById(testMedicalCardRecordId))
                 .ReturnsAsync(GetTestMedicalCardRecords().FirstOrDefault(p => p.Id == testMedicalCardRecordId));
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Delete(testMedicalCardRecordId);
 
@@ -160,7 +160,7 @@ namespace ClinicWebApplication.Tests
             var repo = new Mock<IRepository<MedicalCardRecord>>();
             var mock = GetTestMedicalCardRecords().AsQueryable().BuildMock();
             repo.Setup(x => x.GetAll()).Returns(Task.FromResult(mock.Object.AsEnumerable()));
-            var controller = new MedicalCardRecordsController(repo.Object);
+            var controller = new MedicalCardRecordsController(repo.Object, mapper);
 
             var actionResult = await controller.Delete(7);
 
