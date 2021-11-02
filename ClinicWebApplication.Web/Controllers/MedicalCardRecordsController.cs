@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
-
+using ClinicWebApplication.Web.ViewModels;
+using AutoMapper;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -16,23 +17,27 @@ namespace ClinicWebApplication.Web.Controllers
     public class MedicalCardRecordsController : ControllerBase
     {
         private readonly IRepository<MedicalCardRecord> _medicalCardRecordRepository;
+        private readonly IMapper _mapper;
 
-        public MedicalCardRecordsController(IRepository<MedicalCardRecord> medicalCardRecordRepository)
+        public MedicalCardRecordsController(IRepository<MedicalCardRecord> medicalCardRecordRepository, IMapper mapper)
         {
             _medicalCardRecordRepository = medicalCardRecordRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<MedicalCardRecord>> Get()
+        public async Task<IEnumerable<MedicalCardRecordViewModel>> Get()
         {
-            return await _medicalCardRecordRepository.GetAll();
+            var medicalCardRecords = await _medicalCardRecordRepository.GetAll();
+            return _mapper.Map<IEnumerable<MedicalCardRecord>, IEnumerable<MedicalCardRecordViewModel>>(medicalCardRecords);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicalCardRecord>> Get(int id)
+        public async Task<ActionResult<MedicalCardRecordViewModel>> Get(int id)
         {
             MedicalCardRecord medicalCardRecord = await _medicalCardRecordRepository.GetById(id);
             if (medicalCardRecord == null) return NotFound();
-            return new ObjectResult(medicalCardRecord);
+            var medicalCardRecordViewModel = _mapper.Map<MedicalCardRecordViewModel>(medicalCardRecord);
+            return new ObjectResult(medicalCardRecordViewModel);
         }
         [HttpPost]
         public async Task<ActionResult<MedicalCardRecord>> Post(MedicalCardRecord medicalCardRecord)

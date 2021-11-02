@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
-
+using ClinicWebApplication.Web.ViewModels;
+using AutoMapper;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -16,23 +17,27 @@ namespace ClinicWebApplication.Web.Controllers
     public class FeedbacksController : ControllerBase
     {
         private readonly IRepository<Feedback> _feedbackRepository;
+        private readonly IMapper _mapper;
 
-        public FeedbacksController(IRepository<Feedback> feedbackRepository)
+        public FeedbacksController(IRepository<Feedback> feedbackRepository, IMapper mapper)
         {
             _feedbackRepository = feedbackRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Feedback>> Get()
+        public async Task<IEnumerable<FeedbackViewModel>> Get()
         {
-            return await _feedbackRepository.GetAll();
+            var feedbacks = await _feedbackRepository.GetAll();
+            return _mapper.Map<IEnumerable<Feedback>, IEnumerable<FeedbackViewModel>>(feedbacks);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Feedback>> Get(int id)
+        public async Task<ActionResult<FeedbackViewModel>> Get(int id)
         {
             Feedback feedback = await _feedbackRepository.GetById(id);
             if (feedback == null) return NotFound();
-            return new ObjectResult(feedback);
+            var feedbackViewModel = _mapper.Map<FeedbackViewModel>(feedback);
+            return new ObjectResult(feedbackViewModel);
         }
         [HttpPost]
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)

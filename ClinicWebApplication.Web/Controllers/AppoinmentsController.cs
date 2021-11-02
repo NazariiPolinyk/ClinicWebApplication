@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
+using ClinicWebApplication.Web.ViewModels;
+using AutoMapper;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -14,23 +16,27 @@ namespace ClinicWebApplication.Web.Controllers
     public class AppoinmentsController : ControllerBase
     {
         private readonly IRepository<Appoinment> _appoinmentRepository;
+        private readonly IMapper _mapper;
 
-        public AppoinmentsController(IRepository<Appoinment> appoinmentRepository)
+        public AppoinmentsController(IRepository<Appoinment> appoinmentRepository, IMapper mapper)
         {
             _appoinmentRepository = appoinmentRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Appoinment>> Get()
+        public async Task<IEnumerable<AppoinmentViewModel>> Get()
         {
-            return await _appoinmentRepository.GetAll();
+            var appoinments = await _appoinmentRepository.GetAll();
+            return _mapper.Map<IEnumerable<Appoinment>, IEnumerable<AppoinmentViewModel>>(appoinments);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Appoinment>> Get(int id)
+        public async Task<ActionResult<AppoinmentViewModel>> Get(int id)
         {
             Appoinment appoinment = await _appoinmentRepository.GetById(id);
             if (appoinment == null) return NotFound();
-            return new ObjectResult(appoinment);
+            var appoinmentViewModel = _mapper.Map<AppoinmentViewModel>(appoinment);
+            return new ObjectResult(appoinmentViewModel);
         }
         [HttpPost]
         public async Task<ActionResult<Appoinment>> Post(Appoinment appoinment)

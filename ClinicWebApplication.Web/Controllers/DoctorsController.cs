@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
-using ClinicWebApplication.Interfaces; 
-
+using ClinicWebApplication.Interfaces;
+using ClinicWebApplication.Web.ViewModels;
+using AutoMapper;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -16,23 +17,27 @@ namespace ClinicWebApplication.Web.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IRepository<Doctor> _doctorRepository;
+        private readonly IMapper _mapper;
 
-        public DoctorsController(IRepository<Doctor> doctorRepository)
+        public DoctorsController(IRepository<Doctor> doctorRepository, IMapper mapper)
         {
             _doctorRepository = doctorRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Doctor>> Get()
+        public async Task<IEnumerable<DoctorViewModel>> Get()
         {
-            return await _doctorRepository.GetAll();
+            var doctors = await _doctorRepository.GetAll();
+            return _mapper.Map<IEnumerable<Doctor>, IEnumerable<DoctorViewModel>>(doctors);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Doctor>> Get(int id)
+        public async Task<ActionResult<DoctorViewModel>> Get(int id)
         {
             Doctor doctor = await _doctorRepository.GetById(id);
             if (doctor == null) return NotFound();
-            return new ObjectResult(doctor);
+            var doctorViewModel = _mapper.Map<DoctorViewModel>(doctor);
+            return new ObjectResult(doctorViewModel);
         }
         [HttpPost]
         public async Task<ActionResult<Doctor>> Post(Doctor doctor)

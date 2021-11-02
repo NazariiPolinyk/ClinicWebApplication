@@ -8,8 +8,7 @@ using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.BusinessLayer.Repository;
-using ClinicWebApplication.Web.Controllers;
-
+using ClinicWebApplication.Web.MappingProfiles;
 
 namespace ClinicWebApplication
 {
@@ -25,7 +24,10 @@ namespace ClinicWebApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddAutoMapper(automapper => 
+            {
+                automapper.AddProfile(new MappingProfile());
+            }, typeof(Startup));
             services.AddScoped(typeof(IRepository<>), typeof(ClinicRepository<>));
             services.AddDbContext<ClinicContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();

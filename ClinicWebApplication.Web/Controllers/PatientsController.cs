@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
+using ClinicWebApplication.Web.ViewModels;
+using AutoMapper;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -15,23 +17,27 @@ namespace ClinicWebApplication.Web.Controllers
     public class PatientsController : ControllerBase
     {
         private readonly IRepository<Patient> _patientRepository;
-        
-        public PatientsController(IRepository<Patient> patientRepository)
+        private readonly IMapper _mapper;
+
+        public PatientsController(IRepository<Patient> patientRepository, IMapper mapper)
         {
             _patientRepository = patientRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Patient>> Get()
+        public async Task<IEnumerable<PatientViewModel>> Get()
         {
-            return await _patientRepository.GetAll();
+            var patients = await _patientRepository.GetAll();
+            return _mapper.Map<IEnumerable<Patient>, IEnumerable<PatientViewModel>>(patients);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Patient>> Get(int id)
+        public async Task<ActionResult<PatientViewModel>> Get(int id)
         {
             Patient patient = await _patientRepository.GetById(id);
             if (patient == null) return NotFound();
-            return new ObjectResult(patient);
+            var patientViewModel = _mapper.Map<PatientViewModel>(patient);
+            return new ObjectResult(patientViewModel);
         }
         [HttpPost]
         public async Task<ActionResult<Patient>> Post(Patient patient)
