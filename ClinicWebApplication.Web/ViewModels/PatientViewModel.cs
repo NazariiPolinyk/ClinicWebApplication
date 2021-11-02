@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ClinicWebApplication.Web.ViewModels
 {
-    class PatientViewModel
+    public class PatientViewModel
     {
         public string Name { get; set; }
         public string Phone { get; set; }

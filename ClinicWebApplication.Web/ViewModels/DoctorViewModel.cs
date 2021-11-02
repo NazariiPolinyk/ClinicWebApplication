@@ -2,7 +2,7 @@
 
 namespace ClinicWebApplication.Web.ViewModels
 {
-    class DoctorViewModel
+    public class DoctorViewModel
     {
         public string Name { get; set; }
         public int Experience { get; set; }

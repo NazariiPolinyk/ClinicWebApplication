@@ -2,7 +2,7 @@
 
 namespace ClinicWebApplication.Web.ViewModels
 {
-    class MedicalCardRecordViewModel
+    public class MedicalCardRecordViewModel
     {
         public DoctorViewModel Doctor { get; set; }
         public string Diagnosis { get; set; }
