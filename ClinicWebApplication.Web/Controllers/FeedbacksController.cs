@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -40,6 +41,7 @@ namespace ClinicWebApplication.Web.Controllers
             return new ObjectResult(feedbackViewModel);
         }
         [HttpPost]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
@@ -47,6 +49,7 @@ namespace ClinicWebApplication.Web.Controllers
             return Ok(feedback);
         }
         [HttpPut]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Feedback>> Put(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
@@ -55,6 +58,7 @@ namespace ClinicWebApplication.Web.Controllers
             return Ok(feedback);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Feedback>> Delete(int id)
         {
             Feedback feedback = await _feedbackRepository.GetById(id);

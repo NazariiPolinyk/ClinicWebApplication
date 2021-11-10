@@ -59,6 +59,13 @@ namespace ClinicWebApplication.DataLayer.Models
                 entity.Property(e => e.Description).IsRequired();
 
                 entity.Property(e => e.Name).IsRequired();
+
+                entity.Property(e => e.Email);
+
+                entity.Property(e => e.Password);
+
+                entity.Property(e => e.Role).IsRequired()
+                                            .HasDefaultValueSql("'Doctor'");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -113,6 +120,13 @@ namespace ClinicWebApplication.DataLayer.Models
                     .IsRequired()
                     .HasMaxLength(10)
                     .IsFixedLength(true);
+
+                entity.Property(e => e.Email);
+
+                entity.Property(e => e.Password);
+
+                entity.Property(e => e.Role).IsRequired()
+                                            .HasDefaultValueSql($"'Patient'");
             });
 
             OnModelCreatingPartial(modelBuilder);

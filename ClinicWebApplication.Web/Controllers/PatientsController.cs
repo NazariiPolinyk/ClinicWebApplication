@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -18,20 +20,33 @@ namespace ClinicWebApplication.Web.Controllers
     {
         private readonly IRepository<Patient> _patientRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthService<Patient> _authService;
 
-        public PatientsController(IRepository<Patient> patientRepository, IMapper mapper)
+        public PatientsController(IRepository<Patient> patientRepository, IMapper mapper, IAuthService<Patient> authService)
         {
             _patientRepository = patientRepository;
             _mapper = mapper;
+            _authService = authService;
         }
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody]AuthenticateModel model)
+        {
+            var patient = _authService.Authenticate(model.Login, model.Password);
 
+            if (patient == null) return BadRequest(new { message = "Email or password is incorrect" });
+
+            return Ok(patient);
+        }
         [HttpGet]
+        [Authorize(Roles = "Doctor")]
         public async Task<IEnumerable<PatientViewModel>> Get()
         {
             var patients = await _patientRepository.GetAll();
             return _mapper.Map<IEnumerable<Patient>, IEnumerable<PatientViewModel>>(patients);
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<PatientViewModel>> Get(int id)
         {
             Patient patient = await _patientRepository.GetById(id);
@@ -47,6 +62,7 @@ namespace ClinicWebApplication.Web.Controllers
             return Ok(patient);
         }
         [HttpPut]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Patient>> Put(Patient patient)
         {
             if (patient == null) return BadRequest();
@@ -62,5 +78,7 @@ namespace ClinicWebApplication.Web.Controllers
             await _patientRepository.Delete(patient);
             return Ok();
         }
+
+
     }
 }

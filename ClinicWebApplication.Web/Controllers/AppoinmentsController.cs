@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -25,12 +26,14 @@ namespace ClinicWebApplication.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Doctor")]
         public async Task<IEnumerable<AppoinmentViewModel>> Get()
         {
             var appoinments = await _appoinmentRepository.GetAll();
             return _mapper.Map<IEnumerable<Appoinment>, IEnumerable<AppoinmentViewModel>>(appoinments);
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<AppoinmentViewModel>> Get(int id)
         {
             Appoinment appoinment = await _appoinmentRepository.GetById(id);
@@ -39,6 +42,7 @@ namespace ClinicWebApplication.Web.Controllers
             return new ObjectResult(appoinmentViewModel);
         }
         [HttpPost]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Appoinment>> Post(Appoinment appoinment)
         {
             if (appoinment == null) return BadRequest();
@@ -46,6 +50,7 @@ namespace ClinicWebApplication.Web.Controllers
             return Ok(appoinment);
         }
         [HttpPut]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Appoinment>> Put(Appoinment appoinment)
         {
             if (appoinment == null) return BadRequest();

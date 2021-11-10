@@ -5,7 +5,7 @@ using ClinicWebApplication.Interfaces;
 
 namespace ClinicWebApplication.DataLayer.Models
 {
-    public partial class Doctor : IEntity
+    public partial class Doctor : IEntity, IAccount
     {
         public Doctor()
         {
@@ -19,6 +19,10 @@ namespace ClinicWebApplication.DataLayer.Models
         public int Experience { get; set; }
         public string Category { get; set; }
         public string Description { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; }
+        public string Token { get; set; }
 
         public virtual ICollection<Appoinment> Appoinments { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }

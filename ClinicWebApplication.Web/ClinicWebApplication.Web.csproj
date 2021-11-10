@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ClinicWebApplication.BusinessLayer\ClinicWebApplication.BusinessLayer.csproj" />
     <ProjectReference Include="..\ClinicWebApplication.DataLayer\ClinicWebApplication.DataLayer.csproj" />
     <ProjectReference Include="..\ClinicWebApplication.Interfaces\ClinicWebApplication.Interfaces.csproj" />
   </ItemGroup>
