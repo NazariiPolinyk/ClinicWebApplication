@@ -11,6 +11,7 @@ using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
+using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -58,6 +59,8 @@ namespace ClinicWebApplication.Web.Controllers
         public async Task<ActionResult<Patient>> Post(Patient patient)
         {
             if (patient == null) return BadRequest();
+            var validationResult = InputValidation.ValidatePatient(patient);
+            if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _patientRepository.Insert(patient);
             return Ok(patient);
         }

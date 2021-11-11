@@ -10,6 +10,7 @@ using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -45,6 +46,8 @@ namespace ClinicWebApplication.Web.Controllers
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
         {
             if (feedback == null) return BadRequest();
+            var validationResult = InputValidation.ValidateFeedback(feedback);
+            if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _feedbackRepository.Insert(feedback);
             return Ok(feedback);
         }
