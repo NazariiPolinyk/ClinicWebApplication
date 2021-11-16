@@ -11,6 +11,7 @@ using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
+using ClinicWebApplication.BusinessLayer.Specification.FeedbackSpecification;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -36,7 +37,8 @@ namespace ClinicWebApplication.Web.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FeedbackViewModel>> Get(int id)
         {
-            Feedback feedback = await _feedbackRepository.GetById(id);
+            var feedbacksWithSpecification = await _feedbackRepository.FindWithSpecification(new FeedbackWithPatientSpecification(id));
+            var feedback = feedbacksWithSpecification.SingleOrDefault();
             if (feedback == null) return NotFound();
             var feedbackViewModel = _mapper.Map<FeedbackViewModel>(feedback);
             return new ObjectResult(feedbackViewModel);

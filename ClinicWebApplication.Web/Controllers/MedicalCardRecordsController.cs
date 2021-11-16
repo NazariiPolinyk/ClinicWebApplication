@@ -11,6 +11,7 @@ using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
+using ClinicWebApplication.BusinessLayer.Specification.MedicalCardRecordSpecification;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -37,7 +38,8 @@ namespace ClinicWebApplication.Web.Controllers
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<MedicalCardRecordViewModel>> Get(int id)
         {
-            MedicalCardRecord medicalCardRecord = await _medicalCardRecordRepository.GetById(id);
+            var medicalCardRecordsWithSpecification = await _medicalCardRecordRepository.FindWithSpecification(new MedicalCardRecordWithDoctorSpecification(id));
+            var medicalCardRecord = medicalCardRecordsWithSpecification.SingleOrDefault();
             if (medicalCardRecord == null) return NotFound();
             var medicalCardRecordViewModel = _mapper.Map<MedicalCardRecordViewModel>(medicalCardRecord);
             return new ObjectResult(medicalCardRecordViewModel);

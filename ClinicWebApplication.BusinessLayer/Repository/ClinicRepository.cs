@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
+using ClinicWebApplication.BusinessLayer.Specification;
 
 namespace ClinicWebApplication.BusinessLayer.Repository
 {
@@ -41,6 +42,10 @@ namespace ClinicWebApplication.BusinessLayer.Repository
         {
             _context.Set<T>().Remove(dataObject);
             await _context.SaveChangesAsync();
+        }
+        public async Task<IEnumerable<T>> FindWithSpecification(ISpecification<T> specification = null)
+        {
+            return await SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
         }
     }
 }

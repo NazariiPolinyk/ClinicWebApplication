@@ -10,6 +10,7 @@ using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
+using ClinicWebApplication.BusinessLayer.Specification.AppoinmentSpecification;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -37,7 +38,8 @@ namespace ClinicWebApplication.Web.Controllers
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<AppoinmentViewModel>> Get(int id)
         {
-            Appoinment appoinment = await _appoinmentRepository.GetById(id);
+            var appoinmentsWithSpecification = await _appoinmentRepository.FindWithSpecification(new AppoinmentWithDoctorAndPatientSpecification(id));
+            var appoinment = appoinmentsWithSpecification.SingleOrDefault();
             if (appoinment == null) return NotFound();
             var appoinmentViewModel = _mapper.Map<AppoinmentViewModel>(appoinment);
             return new ObjectResult(appoinmentViewModel);

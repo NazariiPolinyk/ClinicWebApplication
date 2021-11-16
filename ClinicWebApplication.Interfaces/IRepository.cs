@@ -10,5 +10,6 @@ namespace ClinicWebApplication.Interfaces
         Task Insert(T dataObject);
         Task Update(T dataObject);
         Task Delete(T dataObject);
+        Task<IEnumerable<T>> FindWithSpecification(ISpecification<T> specification = null);
     }
 }
