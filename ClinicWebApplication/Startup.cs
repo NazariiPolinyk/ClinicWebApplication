@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +14,7 @@ using ClinicWebApplication.Web.MappingProfiles;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System;
+using ClinicWebApplication.BusinessLayer.Services.EmailService;
 
 namespace ClinicWebApplication
 {
@@ -90,6 +91,8 @@ namespace ClinicWebApplication
                 };
             });
             services.AddScoped(typeof(IAuthService<>), typeof(AuthService<>));
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailService, MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

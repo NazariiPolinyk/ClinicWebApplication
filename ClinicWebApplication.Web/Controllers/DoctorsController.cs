@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
 using ClinicWebApplication.BusinessLayer.Specification.DoctorSpecification;
+using ClinicWebApplication.BusinessLayer.Services.EmailService;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -23,12 +24,14 @@ namespace ClinicWebApplication.Web.Controllers
         private readonly IRepository<Doctor> _doctorRepository;
         private readonly IMapper _mapper;
         private readonly IAuthService<Doctor> _authService;
+        private readonly IMailService _mailService;
 
-        public DoctorsController(IRepository<Doctor> doctorRepository, IMapper mapper, IAuthService<Doctor> authService)
+        public DoctorsController(IRepository<Doctor> doctorRepository, IMapper mapper, IAuthService<Doctor> authService, IMailService mailService)
         {
             _doctorRepository = doctorRepository;
             _mapper = mapper;
             _authService = authService;
+            _mailService = mailService;
         }
         [AllowAnonymous]
         [HttpPost("authenticate")]
