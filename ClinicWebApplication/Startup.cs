@@ -49,7 +49,7 @@ namespace ClinicWebApplication
                     Type = SecuritySchemeType.Http,
                     In = ParameterLocation.Header,
                     BearerFormat = "JWT",
-                    Scheme = "bearer",
+                    Scheme = "Bearer",
                     Description = "Please insert JWT token into field",
                     Name = "Authorization"
                 });
@@ -114,8 +114,8 @@ namespace ClinicWebApplication
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

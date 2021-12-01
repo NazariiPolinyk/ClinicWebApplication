@@ -31,8 +31,8 @@ namespace ClinicWebApplication.Web.Controllers
             _authService = authService;
         }
         [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]AuthenticateModel model)
+        [HttpPost("Authenticate")]
+        public IActionResult Authenticate([FromForm]AuthenticateModel model)
         {
             var patient = _authService.Authenticate(model.Login, model.Password);
 

@@ -34,8 +34,8 @@ namespace ClinicWebApplication.Web.Controllers
             _mailService = mailService;
         }
         [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] AuthenticateModel model)
+        [HttpPost("Authenticate")]
+        public IActionResult Authenticate([FromForm] AuthenticateModel model)
         {
             var doctor = _authService.Authenticate(model.Login, model.Password);
 
