@@ -34,7 +34,8 @@ namespace ClinicWebApplication.BusinessLayer.Services.AuthenticationService
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, account.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+                    new Claim(ClaimTypes.Name, account.Email),
                     new Claim(ClaimTypes.Role, account.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
