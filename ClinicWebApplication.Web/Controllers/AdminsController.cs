@@ -1,16 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ClinicWebApplication.DataLayer.Models;
-using Microsoft.EntityFrameworkCore;
 using ClinicWebApplication.Interfaces;
-using ClinicWebApplication.Web.ViewModels;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 
@@ -31,6 +23,8 @@ namespace ClinicWebApplication.Web.Controllers
             _logger = logger;
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost("Authenticate")]
         public IActionResult Authenticate([FromForm] AuthenticateModel model)

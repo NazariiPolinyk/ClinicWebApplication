@@ -39,6 +39,10 @@ namespace ClinicWebApplication.Web.Controllers
             var feedbacks = await _feedbackRepository.GetAll();
             return _mapper.Map<IEnumerable<Feedback>, IEnumerable<FeedbackViewModel>>(feedbacks);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{id}")]
         [Authorize(Roles = "Patient, Doctor, Admin")]
         public async Task<ActionResult<IEnumerable<FeedbackViewModel>>> Get(int id)
@@ -50,6 +54,9 @@ namespace ClinicWebApplication.Web.Controllers
             var feedbackViewModel = _mapper.Map<IEnumerable<Feedback>, IEnumerable<FeedbackViewModel>>(feedbacks);
             return new ObjectResult(feedbackViewModel);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
         [Authorize(Roles = "Patient, Admin")]
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
@@ -64,6 +71,10 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(feedback);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
         [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Feedback>> Put(Feedback feedback)
@@ -78,6 +89,10 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(feedback);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{id}")]
         [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Feedback>> Delete(int id)

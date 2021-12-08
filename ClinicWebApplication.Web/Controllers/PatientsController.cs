@@ -35,6 +35,8 @@ namespace ClinicWebApplication.Web.Controllers
             _authService = authService;
             _logger = logger;
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost("Authenticate")]
         public IActionResult Authenticate([FromForm]AuthenticateModel model)
@@ -56,10 +58,16 @@ namespace ClinicWebApplication.Web.Controllers
                 $" \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" received information about all patients.");
             return _mapper.Map<IEnumerable<Patient>, IEnumerable<PatientViewModel>>(patients);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{id}")]
         [Authorize(Roles = "Doctor, Patient, Admin")]
         public async Task<ActionResult<PatientViewModel>> Get(int id)
         {
+            if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value == Role.Patient &&
+                Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value) != id) return BadRequest();
             var patientsWithSpecification = await _patientRepository.FindWithSpecification(new PatientWithMedicalCardRecordsSpecification(id));
             var patient = patientsWithSpecification.SingleOrDefault();
             if (patient == null) return NotFound();
@@ -68,6 +76,8 @@ namespace ClinicWebApplication.Web.Controllers
                 $" \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" received information about {patient.Email}[{patient.Id}] patient.");
             return new ObjectResult(patientViewModel);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Patient>> Post(Patient patient)
@@ -81,6 +91,10 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(patient);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
         [Authorize(Roles = "Patient")]
         public async Task<ActionResult<Patient>> Put(Patient patient)
@@ -95,6 +109,9 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(patient);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Patient>> Delete(int id)

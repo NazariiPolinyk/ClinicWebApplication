@@ -40,6 +40,10 @@ namespace ClinicWebApplication.Web.Controllers
             var medicalCardRecords = await _medicalCardRecordRepository.GetAll();
             return _mapper.Map<IEnumerable<MedicalCardRecord>, IEnumerable<MedicalCardRecordViewModel>>(medicalCardRecords);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{id}")]
         [Authorize(Roles = "Doctor, Patient")]
         public async Task<ActionResult<IEnumerable<MedicalCardRecordViewModel>>> Get(int id)
@@ -51,6 +55,9 @@ namespace ClinicWebApplication.Web.Controllers
             var medicalCardRecordViewModel = _mapper.Map<IEnumerable<MedicalCardRecord>, IEnumerable<MedicalCardRecordViewModel>>(medicalCardRecords);
             return new ObjectResult(medicalCardRecordViewModel);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<MedicalCardRecord>> Post(MedicalCardRecord medicalCardRecord)
@@ -65,6 +72,10 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(medicalCardRecord);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<MedicalCardRecord>> Put(MedicalCardRecord medicalCardRecord)
@@ -79,6 +90,10 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(medicalCardRecord);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{id}")]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<MedicalCardRecord>> Delete(int id)

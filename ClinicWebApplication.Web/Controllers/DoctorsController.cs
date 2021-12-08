@@ -39,6 +39,8 @@ namespace ClinicWebApplication.Web.Controllers
             _logger = logger;
             _mailService = mailService;
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost("Authenticate")]
         public IActionResult Authenticate([FromForm] AuthenticateModel model)
@@ -62,10 +64,16 @@ namespace ClinicWebApplication.Web.Controllers
 
             return _mapper.Map<IEnumerable<Doctor>, IEnumerable<DoctorViewModel>>(doctors);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{id}")]
         [Authorize(Roles = "Patient, Doctor, Admin")]
         public async Task<ActionResult<DoctorViewModel>> Get(int id)
         {
+            if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value == Role.Doctor &&
+                Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value) != id) return BadRequest();
             var doctorsWithSpecification = await _doctorRepository.FindWithSpecification(new DoctorWithFeedbacksSpecification(id));
             var doctor = doctorsWithSpecification.SingleOrDefault();
             if (doctor == null) return NotFound();
@@ -76,6 +84,8 @@ namespace ClinicWebApplication.Web.Controllers
 
             return new ObjectResult(doctorViewModel);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Doctor>> Post(Doctor doctor)
@@ -89,6 +99,10 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(doctor);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<Doctor>> Put(Doctor doctor)
@@ -103,6 +117,9 @@ namespace ClinicWebApplication.Web.Controllers
 
             return Ok(doctor);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Doctor>> Delete(int id)
