@@ -33,14 +33,14 @@ namespace ClinicWebApplication.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor, Admin")]
         public async Task<IEnumerable<AppoinmentViewModel>> Get()
         {
             var appoinments = await _appoinmentRepository.GetAll();
             return _mapper.Map<IEnumerable<Appoinment>, IEnumerable<AppoinmentViewModel>>(appoinments);
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor, Admin")]
         public async Task<ActionResult<AppoinmentViewModel>> Get(int id)
         {
             if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value == Role.Doctor &&

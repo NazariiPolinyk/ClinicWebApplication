@@ -40,7 +40,7 @@ namespace ClinicWebApplication.Web.Controllers
             return _mapper.Map<IEnumerable<Feedback>, IEnumerable<FeedbackViewModel>>(feedbacks);
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "Patient, Doctor")]
+        [Authorize(Roles = "Patient, Doctor, Admin")]
         public async Task<ActionResult<IEnumerable<FeedbackViewModel>>> Get(int id)
         {
             if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value == Role.Doctor &&
@@ -51,7 +51,7 @@ namespace ClinicWebApplication.Web.Controllers
             return new ObjectResult(feedbackViewModel);
         }
         [HttpPost]
-        [Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient, Admin")]
         public async Task<ActionResult<Feedback>> Post(Feedback feedback)
         {
             if (feedback == null) return BadRequest();

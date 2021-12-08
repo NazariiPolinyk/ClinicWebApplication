@@ -52,7 +52,7 @@ namespace ClinicWebApplication.Web.Controllers
             return Ok(doctor);
         }
         [HttpGet]
-        [Authorize(Roles = "Patient")]
+        [Authorize(Roles = "Patient, Admin")]
         public async Task<IEnumerable<DoctorViewModel>> Get()
         {
             var doctors = await _doctorRepository.GetAll();
@@ -63,7 +63,7 @@ namespace ClinicWebApplication.Web.Controllers
             return _mapper.Map<IEnumerable<Doctor>, IEnumerable<DoctorViewModel>>(doctors);
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "Patient, Doctor")]
+        [Authorize(Roles = "Patient, Doctor, Admin")]
         public async Task<ActionResult<DoctorViewModel>> Get(int id)
         {
             var doctorsWithSpecification = await _doctorRepository.FindWithSpecification(new DoctorWithFeedbacksSpecification(id));
@@ -104,6 +104,7 @@ namespace ClinicWebApplication.Web.Controllers
             return Ok(doctor);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Doctor>> Delete(int id)
         {
             Doctor doctor = await _doctorRepository.GetById(id);
