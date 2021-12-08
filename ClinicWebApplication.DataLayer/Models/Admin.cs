@@ -2,7 +2,7 @@
 
 namespace ClinicWebApplication.DataLayer.Models
 {
-    class Admin : IEntity, IAccount
+    public class Admin : IEntity, IAccount
     {
         public int Id { get; set; }
         public string Email { get; set; }
