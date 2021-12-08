@@ -129,6 +129,18 @@ namespace ClinicWebApplication.DataLayer.Models
                                             .HasDefaultValueSql($"'Patient'");
             });
 
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.ToTable("Admin");
+
+                entity.Property(e => e.Email);
+
+                entity.Property(e => e.Password);
+
+                entity.Property(e => e.Role).IsRequired()
+                                            .HasDefaultValueSql($"'Admin'");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
