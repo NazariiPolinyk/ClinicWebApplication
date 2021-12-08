@@ -4,7 +4,7 @@ namespace ClinicWebApplication.BusinessLayer.Specification.FeedbackSpecification
 {
     public class FeedbackWithPatientSpecification : BaseSpecification<Feedback>
     {
-        public FeedbackWithPatientSpecification(int id) : base(x => x.Id == id)
+        public FeedbackWithPatientSpecification(int id) : base(x => x.DoctorId == id)
         {
             AddInclude(x => x.Patient);
         }

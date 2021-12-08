@@ -4,7 +4,7 @@ namespace ClinicWebApplication.BusinessLayer.Specification.AppoinmentSpecificati
 {
     public class AppoinmentWithDoctorAndPatientSpecification : BaseSpecification<Appoinment>
     {
-        public AppoinmentWithDoctorAndPatientSpecification(int id) : base(x => x.Id == id)
+        public AppoinmentWithDoctorAndPatientSpecification(int id) : base(x => x.DoctorId == id && x.IsEnable == true)
         {
             AddInclude(x => x.Doctor);
             AddInclude(x => x.Patient);

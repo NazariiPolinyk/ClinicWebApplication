@@ -4,7 +4,7 @@ namespace ClinicWebApplication.BusinessLayer.Specification.MedicalCardRecordSpec
 {
     public class MedicalCardRecordWithDoctorSpecification : BaseSpecification<MedicalCardRecord>
     {
-        public MedicalCardRecordWithDoctorSpecification(int id) : base(x => x.Id == id)
+        public MedicalCardRecordWithDoctorSpecification(int id) : base(x => x.PatientId == id)
         {
             AddInclude(x => x.Doctor);
         }
