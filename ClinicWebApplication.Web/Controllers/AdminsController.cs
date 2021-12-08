@@ -39,7 +39,7 @@ namespace ClinicWebApplication.Web.Controllers
 
             if (admin == null) return BadRequest(new { message = "Email or password is incorrect" });
 
-            _logger.LogInformation($"Doctor \"{model.Login}\" was authenticated");
+            _logger.LogInformation($"Admin \"{model.Login}\" was authenticated");
 
             return Ok(admin);
         }
