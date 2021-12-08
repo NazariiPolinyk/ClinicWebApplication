@@ -10,10 +10,14 @@ using ClinicWebApplication.Interfaces;
 using ClinicWebApplication.Web.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
 using ClinicWebApplication.BusinessLayer.Specification.DoctorSpecification;
 using ClinicWebApplication.BusinessLayer.Services.EmailService;
+
+
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -24,13 +28,15 @@ namespace ClinicWebApplication.Web.Controllers
         private readonly IRepository<Doctor> _doctorRepository;
         private readonly IMapper _mapper;
         private readonly IAuthService<Doctor> _authService;
+        private readonly ILogger<DoctorsController> _logger;
         private readonly IMailService _mailService;
 
-        public DoctorsController(IRepository<Doctor> doctorRepository, IMapper mapper, IAuthService<Doctor> authService, IMailService mailService)
+        public DoctorsController(IRepository<Doctor> doctorRepository, IMapper mapper, IAuthService<Doctor> authService, ILogger<DoctorsController> logger, IMailService mailService)
         {
             _doctorRepository = doctorRepository;
             _mapper = mapper;
             _authService = authService;
+            _logger = logger;
             _mailService = mailService;
         }
         [AllowAnonymous]
@@ -41,6 +47,8 @@ namespace ClinicWebApplication.Web.Controllers
 
             if (doctor == null) return BadRequest(new { message = "Email or password is incorrect" });
 
+            _logger.LogInformation($"Doctor \"{model.Login}\" was authenticated");
+
             return Ok(doctor);
         }
         [HttpGet]
@@ -48,6 +56,10 @@ namespace ClinicWebApplication.Web.Controllers
         public async Task<IEnumerable<DoctorViewModel>> Get()
         {
             var doctors = await _doctorRepository.GetAll();
+
+            _logger.LogInformation($"{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value} " +
+                $" \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" received information about all doctors.");
+
             return _mapper.Map<IEnumerable<Doctor>, IEnumerable<DoctorViewModel>>(doctors);
         }
         [HttpGet("{id}")]
@@ -58,25 +70,37 @@ namespace ClinicWebApplication.Web.Controllers
             var doctor = doctorsWithSpecification.SingleOrDefault();
             if (doctor == null) return NotFound();
             var doctorViewModel = _mapper.Map<DoctorViewModel>(doctor);
+
+            _logger.LogInformation($"{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value} " +
+                $" \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" received information about {doctor.Email}[{doctor.Id}] patient.");
+
             return new ObjectResult(doctorViewModel);
         }
+        [AllowAnonymous]
         [HttpPost]
-        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<Doctor>> Post(Doctor doctor)
         {
             if (doctor == null) return BadRequest();
             var validationResult = InputValidation.ValidateDoctor(doctor);
             if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _doctorRepository.Insert(doctor);
+
+            _logger.LogInformation($"New doctor \"{doctor.Email}\" was created.");
+
             return Ok(doctor);
         }
         [HttpPut]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<Doctor>> Put(Doctor doctor)
         {
-            if (doctor == null) return BadRequest();
+            if (doctor == null ||
+                doctor.Id != Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value)) return BadRequest();
             if (await _doctorRepository.GetById(doctor.Id) == null) return NotFound();
             await _doctorRepository.Update(doctor);
+
+            _logger.LogInformation($"{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value} " +
+                $" \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" changed his data.");
+
             return Ok(doctor);
         }
         [HttpDelete("{id}")]
@@ -85,6 +109,9 @@ namespace ClinicWebApplication.Web.Controllers
             Doctor doctor = await _doctorRepository.GetById(id);
             if (doctor == null) return NotFound();
             await _doctorRepository.Delete(doctor);
+
+            _logger.LogInformation($"Doctor \"{doctor.Email}[{doctor.Id}]\" was deleted.");
+
             return Ok();
         }
     

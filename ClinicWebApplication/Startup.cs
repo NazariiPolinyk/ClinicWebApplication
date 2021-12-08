@@ -15,6 +15,8 @@ using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ClinicWebApplication.BusinessLayer.Services.EmailService;
+using Serilog;
+using Microsoft.AspNetCore.Http;
 
 namespace ClinicWebApplication
 {
@@ -93,6 +95,7 @@ namespace ClinicWebApplication
             services.AddScoped(typeof(IAuthService<>), typeof(AuthService<>));
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();
+            services.AddLogging();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,6 +107,8 @@ namespace ClinicWebApplication
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ClinicWebApplication v1"));
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
 
