@@ -15,6 +15,7 @@ using ClinicWebApplication.BusinessLayer.Specification.FeedbackSpecification;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
+using ClinicWebApplication.Web.InputModels;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -58,16 +59,21 @@ namespace ClinicWebApplication.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
-        [Authorize(Roles = "Patient, Admin")]
-        public async Task<ActionResult<Feedback>> Post(Feedback feedback)
+        [Authorize(Roles = "Patient")]
+        public async Task<ActionResult<Feedback>> Post([FromForm] FeedbackInputModel feedbackInputModel)
         {
-            if (feedback == null) return BadRequest();
+            if (feedbackInputModel == null) return BadRequest();
+            Feedback feedback = new Feedback
+            {
+                DoctorId = feedbackInputModel.DoctorId,
+                PatientId = Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value),
+                FeedbackText = feedbackInputModel.FeedbackText
+            };
             var validationResult = InputValidation.ValidateFeedback(feedback);
             if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _feedbackRepository.Insert(feedback);
 
-            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" created new feedback to" +
-                $"{feedback.Doctor.Email}.");
+            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" created new feedback.");
 
             return Ok(feedback);
         }
@@ -84,9 +90,7 @@ namespace ClinicWebApplication.Web.Controllers
             if (await _feedbackRepository.GetById(feedback.Id) == null) return NotFound();
             await _feedbackRepository.Update(feedback);
 
-            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" changed feedback to" +
-                $"{feedback.Doctor.Email}.");
-
+            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" changed feedback.");
             return Ok(feedback);
         }
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -103,8 +107,7 @@ namespace ClinicWebApplication.Web.Controllers
             if (feedback == null) return NotFound();
             await _feedbackRepository.Delete(feedback);
 
-            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" deleted feedback[{id}] to" +
-                $"{feedback.Doctor.Email}.");
+            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" deleted feedback[{id}].");
 
             return Ok();
         }

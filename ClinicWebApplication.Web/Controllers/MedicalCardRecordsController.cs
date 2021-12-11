@@ -15,6 +15,7 @@ using ClinicWebApplication.BusinessLayer.Specification.MedicalCardRecordSpecific
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
+using ClinicWebApplication.Web.InputModels;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -60,15 +61,21 @@ namespace ClinicWebApplication.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
         [Authorize(Roles = "Doctor")]
-        public async Task<ActionResult<MedicalCardRecord>> Post(MedicalCardRecord medicalCardRecord)
+        public async Task<ActionResult<MedicalCardRecord>> Post([FromForm] MedicalCardRecordInputModel medicalCardRecordInputModel)
         {
-            if (medicalCardRecord == null) return BadRequest();
+            if (medicalCardRecordInputModel == null) return BadRequest();
+            MedicalCardRecord medicalCardRecord = new MedicalCardRecord 
+            {
+                PatientId = medicalCardRecordInputModel.PatientId,
+                DoctorId = Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value),
+                Diagnosis = medicalCardRecordInputModel.Diagnosis,
+                DateTime = DateTime.Now
+            };
             var validationResult = InputValidation.ValidateMedicalCardRecord(medicalCardRecord);
             if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _medicalCardRecordRepository.Insert(medicalCardRecord);
 
-            _logger.LogInformation($"Doctor \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" created new record in medical card of" +
-                $"{medicalCardRecord.Patient.Email}.");
+            _logger.LogInformation($"Doctor \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" created new record in medical card.");
 
             return Ok(medicalCardRecord);
         }
@@ -85,8 +92,7 @@ namespace ClinicWebApplication.Web.Controllers
             if (await _medicalCardRecordRepository.GetById(medicalCardRecord.Id) == null) return NotFound();
             await _medicalCardRecordRepository.Update(medicalCardRecord);
 
-            _logger.LogInformation($"Doctor \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" changed record[{medicalCardRecord.Id}] in medical card of" +
-                $"{medicalCardRecord.Patient.Email}.");
+            _logger.LogInformation($"Doctor \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" changed record[{medicalCardRecord.Id}] in medical card.");
 
             return Ok(medicalCardRecord);
         }
@@ -104,8 +110,7 @@ namespace ClinicWebApplication.Web.Controllers
             if (medicalCardRecord == null) return NotFound();
             await _medicalCardRecordRepository.Delete(medicalCardRecord);
 
-            _logger.LogInformation($"Doctor \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" deleted record[{id}] in medical card of" +
-                $"{medicalCardRecord.Patient.Email}.");
+            _logger.LogInformation($"Doctor \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" deleted record[{id}] in medical card.");
 
 
             return Ok();

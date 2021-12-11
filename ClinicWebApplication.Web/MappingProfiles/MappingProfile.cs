@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClinicWebApplication.DataLayer.Models;
+using ClinicWebApplication.Web.InputModels;
 using ClinicWebApplication.Web.ViewModels;
 
 namespace ClinicWebApplication.Web.MappingProfiles

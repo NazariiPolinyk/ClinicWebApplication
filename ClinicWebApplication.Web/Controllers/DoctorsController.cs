@@ -16,8 +16,7 @@ using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
 using ClinicWebApplication.BusinessLayer.Specification.DoctorSpecification;
 using ClinicWebApplication.BusinessLayer.Services.EmailService;
-
-
+using ClinicWebApplication.Web.InputModels;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -88,12 +87,24 @@ namespace ClinicWebApplication.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<Doctor>> Post(Doctor doctor)
+        public async Task<ActionResult<Doctor>> Post([FromForm] DoctorInputModel doctorInputModel)
         {
-            if (doctor == null) return BadRequest();
+            if (doctorInputModel == null) return BadRequest();
+            Doctor doctor = new Doctor
+            {
+                Name = doctorInputModel.Name,
+                Experience = doctorInputModel.Experience,
+                Category = doctorInputModel.Category,
+                Description = doctorInputModel.Description,
+                Email = doctorInputModel.Email,
+                Password = doctorInputModel.Password,
+                Role = Role.Doctor
+            };
             var validationResult = InputValidation.ValidateDoctor(doctor);
             if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _doctorRepository.Insert(doctor);
+
+            //await _mailService.SendEmailAsync(new MailRequest { ToEmail = doctor.Email, Subject = "Hello!", Body = "You just registered as a doctor!" });
 
             _logger.LogInformation($"New doctor \"{doctor.Email}\" was created.");
 

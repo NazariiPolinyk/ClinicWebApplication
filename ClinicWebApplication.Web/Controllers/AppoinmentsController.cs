@@ -14,6 +14,7 @@ using ClinicWebApplication.BusinessLayer.Specification.AppoinmentSpecification;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using ClinicWebApplication.Web.InputModels;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -60,15 +61,21 @@ namespace ClinicWebApplication.Web.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost]
         [Authorize(Roles = "Patient")]
-        public async Task<ActionResult<Appoinment>> Post(Appoinment appoinment)
+        public async Task<ActionResult<Appoinment>> Post([FromForm] AppoinmentInputModel appoinmentInputModel)
         {
-            if (appoinment == null) return BadRequest();
+            if (appoinmentInputModel == null) return BadRequest();
+            Appoinment appoinment = new Appoinment
+            {
+                PatientId = Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value),
+                DoctorId = appoinmentInputModel.DoctorId,
+                Description = appoinmentInputModel.Description,
+                IsEnable = true
+            };
             var validationResult = InputValidation.ValidateAppoinment(appoinment);
             if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _appoinmentRepository.Insert(appoinment);
 
-            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" created new appointment to" +
-                $"{appoinment.Doctor.Email}.");
+            _logger.LogInformation($"Patient \"{this.User.Identity.Name}[{User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value}]\" created new appointment.");
 
             return Ok(appoinment);
         }
@@ -80,9 +87,8 @@ namespace ClinicWebApplication.Web.Controllers
         [Authorize(Roles = "Patient, Doctor")]
         public async Task<ActionResult<Appoinment>> Put(Appoinment appoinment)
         {
-            if (appoinment == null ||
-                appoinment.DoctorId != Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value) ||
-                appoinment.PatientId != Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value)) return BadRequest();
+            if (appoinment == null 
+                || appoinment.PatientId != Int32.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value)) return BadRequest();
             if (await _appoinmentRepository.GetById(appoinment.Id) == null) return NotFound();
             await _appoinmentRepository.Update(appoinment);
 

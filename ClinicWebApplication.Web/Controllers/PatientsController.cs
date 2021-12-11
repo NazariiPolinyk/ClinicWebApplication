@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using ClinicWebApplication.BusinessLayer.Services.AuthenticationService;
 using ClinicWebApplication.BusinessLayer.Services.InputValidationService;
 using ClinicWebApplication.BusinessLayer.Specification.PatientSpecification;
-
+using ClinicWebApplication.Web.InputModels;
 
 namespace ClinicWebApplication.Web.Controllers
 {
@@ -80,9 +80,18 @@ namespace ClinicWebApplication.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<Patient>> Post(Patient patient)
+        public async Task<ActionResult<Patient>> Post([FromForm] PatientInputModel patientInputModel)
         {
-            if (patient == null) return BadRequest();
+            if (patientInputModel == null) return BadRequest();
+            Patient patient = new Patient
+            {
+                Name = patientInputModel.Name,
+                Phone = patientInputModel.Phone,
+                BirthDate = patientInputModel.BirthDate,
+                Email = patientInputModel.Email,
+                Password = patientInputModel.Password,
+                Role = Role.Patient
+            };
             var validationResult = InputValidation.ValidatePatient(patient);
             if (validationResult.result == false) return BadRequest(new { message = validationResult.error });
             await _patientRepository.Insert(patient);
