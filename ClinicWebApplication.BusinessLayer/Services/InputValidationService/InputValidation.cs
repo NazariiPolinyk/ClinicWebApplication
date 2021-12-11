@@ -12,19 +12,19 @@ namespace ClinicWebApplication.BusinessLayer.Services.InputValidationService
         private static readonly Regex NamePattern = new Regex(@"([А-ЯҐЄІЇ][а-яґєії][A-Z][a-z]+[\-\s]?){3,}");
         private static readonly Regex PhonePattern = new Regex(@"\d{10}");
         private static readonly Regex EmailPattern = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
-        private const int MinPasswordLength = 8, MaxPasswordLength = 30, MaxNameLength = 49, MaxPhoneNumberLength = 10, MinBirthDateYear = 1900, MaxExpierenceYear = 65;
+        private const int MinPasswordLength = 8, MaxPasswordLength = 30, MaxNameLength = 79, MaxPhoneNumberLength = 10, MinBirthDateYear = 1900, MaxExpierenceYear = 65;
         private const int MaxCategoryTextLength = 30, MaxDescriptionTextLength = 500, MaxFeedbackTextLength = 200, MaxDiagnosisTextLength = 200;
         public static (bool result, string error) ValidatePatient(Patient patient)
         {
             if(string.IsNullOrWhiteSpace(patient.Name) 
                 || patient.Name.Length > MaxNameLength
-                || !NamePattern.IsMatch(patient.Name))
+                || NamePattern.IsMatch(patient.Name))
             {
                 return (false, "Name is not valid.");
             }
             if(string.IsNullOrWhiteSpace(patient.Phone)
                 || patient.Phone.Length > MaxPhoneNumberLength
-                || !PhonePattern.IsMatch(patient.Phone))
+                || PhonePattern.IsMatch(patient.Phone))
             {
                 return (false, "Phone number is not valid.");
             }
@@ -34,7 +34,7 @@ namespace ClinicWebApplication.BusinessLayer.Services.InputValidationService
                 return (false, "Birth date is not valid.");
             }
             if(string.IsNullOrWhiteSpace(patient.Email)
-                || !EmailPattern.IsMatch(patient.Email))
+                || EmailPattern.IsMatch(patient.Email))
             {
                 return (false, "Email address is not valid.");
             }
@@ -50,7 +50,7 @@ namespace ClinicWebApplication.BusinessLayer.Services.InputValidationService
         {
             if(string.IsNullOrWhiteSpace(doctor.Name)
                 || doctor.Name.Length > MaxNameLength
-                || !NamePattern.IsMatch(doctor.Name))
+                || NamePattern.IsMatch(doctor.Name))
             {
                 return (false, "Name is not valid.");
             }
@@ -70,7 +70,7 @@ namespace ClinicWebApplication.BusinessLayer.Services.InputValidationService
                 return (false, "Description is empty or too long.");
             }
             if (string.IsNullOrWhiteSpace(doctor.Email)
-                || !EmailPattern.IsMatch(doctor.Email))
+                || EmailPattern.IsMatch(doctor.Email))
             {
                 return (false, "Email address is not valid.");
             }
