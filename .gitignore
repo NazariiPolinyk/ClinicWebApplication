@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+\ClinicWebApplication\appsettings.Development.json
+/.project
